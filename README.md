@@ -1,0 +1,1 @@
+# Alexa-Skill-Emotionsadaptivitaet-im-Small-Talk
