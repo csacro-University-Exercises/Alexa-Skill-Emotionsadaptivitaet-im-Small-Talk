@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Erstellungszeit: 16. Jun 2019 um 18:13
+-- Erstellungszeit: 16. Jun 2019 um 20:03
 -- Server-Version: 10.1.34-MariaDB
 -- PHP-Version: 7.2.8
 
@@ -74,6 +74,13 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_german2_ci;
 
 --
+-- Daten für Tabelle `user`
+--
+
+INSERT INTO `user` (`UserId`, `UserName`, `Feeling`, `lastFeelingDate`) VALUES
+(1, 'Carolin', NULL, '2019-06-16 20:01:51');
+
+--
 -- Indizes der exportierten Tabellen
 --
 
@@ -119,25 +126,25 @@ ALTER TABLE `activity`
 -- AUTO_INCREMENT für Tabelle `user`
 --
 ALTER TABLE `user`
-  MODIFY `UserId` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `UserId` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Constraints der exportierten Tabellen
 --
 
 --
--- Constraints der Tabelle `activity`
+-- Constraints der Tabelle `doneactivities`
 --
-ALTER TABLE `activity`
-  ADD CONSTRAINT `FK_activity_doneactivities` FOREIGN KEY (`ActivityId`) REFERENCES `doneactivities` (`ActivityId`),
-  ADD CONSTRAINT `FK_activity_futureactivities` FOREIGN KEY (`ActivityId`) REFERENCES `futureactivites` (`ActivityId`);
+ALTER TABLE `doneactivities`
+  ADD CONSTRAINT `FK_activity_doneactivities` FOREIGN KEY (`ActivityId`) REFERENCES `activity` (`ActivityId`),
+  ADD CONSTRAINT `FK_user_doneactivites` FOREIGN KEY (`UserId`) REFERENCES `user` (`UserId`);
 
 --
--- Constraints der Tabelle `user`
+-- Constraints der Tabelle `futureactivites`
 --
-ALTER TABLE `user`
-  ADD CONSTRAINT `FK_user_doneactivities` FOREIGN KEY (`UserId`) REFERENCES `doneactivities` (`UserId`) ON DELETE CASCADE,
-  ADD CONSTRAINT `FK_user_futureactivities` FOREIGN KEY (`UserId`) REFERENCES `futureactivites` (`UserId`) ON DELETE CASCADE;
+ALTER TABLE `futureactivites`
+  ADD CONSTRAINT `FK_activity_futureactivities` FOREIGN KEY (`ActivityId`) REFERENCES `activity` (`ActivityId`),
+  ADD CONSTRAINT `FK_user_futureactivites` FOREIGN KEY (`UserId`) REFERENCES `user` (`UserId`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
