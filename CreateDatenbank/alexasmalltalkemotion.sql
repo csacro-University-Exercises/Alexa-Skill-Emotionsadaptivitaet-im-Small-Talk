@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Erstellungszeit: 16. Jun 2019 um 20:03
+-- Erstellungszeit: 20. Jun 2019 um 12:13
 -- Server-Version: 10.1.34-MariaDB
 -- PHP-Version: 7.2.8
 
@@ -33,6 +33,13 @@ CREATE TABLE `activity` (
   `ActivityName` varchar(255) COLLATE utf8_german2_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_german2_ci;
 
+--
+-- Daten für Tabelle `activity`
+--
+
+INSERT INTO `activity` (`ActivityId`, `ActivityName`) VALUES
+(1, 'Schwimmen');
+
 -- --------------------------------------------------------
 
 --
@@ -42,7 +49,7 @@ CREATE TABLE `activity` (
 CREATE TABLE `doneactivities` (
   `UserId` int(10) UNSIGNED NOT NULL,
   `ActivityId` int(10) UNSIGNED NOT NULL,
-  `Count` int(10) UNSIGNED NOT NULL DEFAULT '0',
+  `Count` int(10) UNSIGNED NOT NULL DEFAULT '1',
   `Status` int(1) NOT NULL,
   `lastStatusDate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_german2_ci;
@@ -50,10 +57,10 @@ CREATE TABLE `doneactivities` (
 -- --------------------------------------------------------
 
 --
--- Tabellenstruktur für Tabelle `futureactivites`
+-- Tabellenstruktur für Tabelle `futureactivities`
 --
 
-CREATE TABLE `futureactivites` (
+CREATE TABLE `futureactivities` (
   `UserId` int(10) UNSIGNED NOT NULL,
   `ActivityId` int(10) UNSIGNED NOT NULL,
   `Status` int(1) NOT NULL,
@@ -78,7 +85,7 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`UserId`, `UserName`, `Feeling`, `lastFeelingDate`) VALUES
-(1, 'Carolin', NULL, '2019-06-16 20:01:51');
+(1, 'Carolin', 1, '2019-06-20 12:05:34');
 
 --
 -- Indizes der exportierten Tabellen
@@ -99,9 +106,9 @@ ALTER TABLE `doneactivities`
   ADD KEY `ActivityId` (`ActivityId`);
 
 --
--- Indizes für die Tabelle `futureactivites`
+-- Indizes für die Tabelle `futureactivities`
 --
-ALTER TABLE `futureactivites`
+ALTER TABLE `futureactivities`
   ADD PRIMARY KEY (`UserId`,`ActivityId`),
   ADD KEY `ActivityId` (`ActivityId`);
 
@@ -120,7 +127,7 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT für Tabelle `activity`
 --
 ALTER TABLE `activity`
-  MODIFY `ActivityId` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `ActivityId` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT für Tabelle `user`
@@ -140,9 +147,9 @@ ALTER TABLE `doneactivities`
   ADD CONSTRAINT `FK_user_doneactivites` FOREIGN KEY (`UserId`) REFERENCES `user` (`UserId`);
 
 --
--- Constraints der Tabelle `futureactivites`
+-- Constraints der Tabelle `futureactivities`
 --
-ALTER TABLE `futureactivites`
+ALTER TABLE `futureactivities`
   ADD CONSTRAINT `FK_activity_futureactivities` FOREIGN KEY (`ActivityId`) REFERENCES `activity` (`ActivityId`),
   ADD CONSTRAINT `FK_user_futureactivites` FOREIGN KEY (`UserId`) REFERENCES `user` (`UserId`);
 COMMIT;
