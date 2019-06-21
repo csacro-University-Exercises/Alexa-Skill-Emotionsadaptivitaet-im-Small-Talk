@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Erstellungszeit: 20. Jun 2019 um 12:13
+-- Erstellungszeit: 21. Jun 2019 um 21:04
 -- Server-Version: 10.1.34-MariaDB
 -- PHP-Version: 7.2.8
 
@@ -32,13 +32,6 @@ CREATE TABLE `activity` (
   `ActivityId` int(10) UNSIGNED NOT NULL,
   `ActivityName` varchar(255) COLLATE utf8_german2_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_german2_ci;
-
---
--- Daten für Tabelle `activity`
---
-
-INSERT INTO `activity` (`ActivityId`, `ActivityName`) VALUES
-(1, 'Schwimmen');
 
 -- --------------------------------------------------------
 
@@ -81,13 +74,6 @@ CREATE TABLE `user` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_german2_ci;
 
 --
--- Daten für Tabelle `user`
---
-
-INSERT INTO `user` (`UserId`, `UserName`, `Feeling`, `lastFeelingDate`) VALUES
-(1, 'Carolin', 1, '2019-06-20 12:05:34');
-
---
 -- Indizes der exportierten Tabellen
 --
 
@@ -127,13 +113,13 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT für Tabelle `activity`
 --
 ALTER TABLE `activity`
-  MODIFY `ActivityId` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `ActivityId` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT für Tabelle `user`
 --
 ALTER TABLE `user`
-  MODIFY `UserId` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `UserId` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints der exportierten Tabellen

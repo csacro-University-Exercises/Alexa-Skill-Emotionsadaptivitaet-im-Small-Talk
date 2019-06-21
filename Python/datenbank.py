@@ -70,9 +70,9 @@ class Datenbank:
 
     #Hilfsmehtode: round status
     def __round(self, num):
-        if (num < -0.667):
+        if (num < -0.33):
             roundednum = -1
-        elif (num > 0.667):
+        elif (num > 0.33):
             roundednum = 1
         else:
             roundednum = 0
@@ -328,13 +328,13 @@ class Datenbank:
         :param UserId: erhalten durch getUser-Methode bzw. createUser-Methode
         :param tries: Anzahl der Versuche Aktiviteatsvorschlag zu geben
         :return Activitaet: Name der vorgeschlagenen Aktivitaet
-                None: User hat keine tries-viele Aktivitaeten in doneactivities eingetragen, die "gruen" oder "gelb" sind
+                None: User hat keine tries-viele Aktivitaeten in doneactivities eingetragen, die nicht fuer heute geplant sind und "gruen" oder "gelb" sind
         :raise: mysql.connector.errors.Error
         """
         try:
             cursor = self.__mydb.cursor()
-            query = "SELECT activity.ActivityName FROM activity JOIN doneactivities ON activity.ActivityId = doneactivities.ActivityId WHERE UserId = %s AND Status/Count >= -0.667 ORDER BY Status/Count DESC, CONVERT(lastStatusDate, DATE) != CURRENT_DATE ASC LIMIT 1 OFFSET %s"
-            query_param = (userId, tries)
+            query = "SELECT ActivityName FROM activity JOIN doneactivities ON activity.ActivityId = doneactivities.ActivityId WHERE UserId = %s AND Status/Count >= -0.33 AND doneactivities.ActivityId NOT IN (SELECT ActivityId FROM futureactivities WHERE UserId = %s) ORDER BY Status/Count DESC, CONVERT(lastStatusDate, DATE) != CURRENT_DATE ASC LIMIT 1 OFFSET %s"
+            query_param = (userId, userId, tries-1)
             cursor.execute(query, query_param)
             result = cursor.fetchone()
             cursor.close()
@@ -355,7 +355,7 @@ class Datenbank:
         """
         try:
             cursor = self.__mydb.cursor()
-            query = "SELECT activity.ActivityName FROM activity JOIN futureactivities ON activity.ActivityId = futureactivities.ActivityId WHERE UserId = %s ORDER BY CONVERT(lastStatusDate, DATE) != CURRENT_DATE ASC"
+            query = "SELECT ActivityName FROM activity JOIN futureactivities ON activity.ActivityId = futureactivities.ActivityId WHERE UserId = %s ORDER BY CONVERT(lastStatusDate, DATE) != CURRENT_DATE ASC"
             query_param = (userId,)
             cursor.execute(query, query_param)
             result = cursor.fetchall()
@@ -401,11 +401,11 @@ class Datenbank:
 
 
 #Beispiel-Code
-user = ""
+user = "Carolin"
 feel = 0
-act = ""
+act = "asdf"
 futstat = 0
-donestat = 0
+donestat = 1
 
 try:
     db = Datenbank()
@@ -463,7 +463,7 @@ except mysql.connector.errors.Error as e:
     exit(str(e))
 
 try:
-    for i in range(0, 5):
+    for i in range(1, 5):
         vorschlag = db.getActivity(id, i)
         print("getActivity, Vorschlag %s: %s" % (i, vorschlag))
 except mysql.connector.errors.Error as e:
