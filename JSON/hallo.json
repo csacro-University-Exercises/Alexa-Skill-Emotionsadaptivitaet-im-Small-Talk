@@ -99,6 +99,32 @@
                         "Ich habe vor noch zu {action}",
                         "Ich werde {action}"
                     ]
+                },
+                {
+                    "name": "UserIntent",
+                    "slots": [
+                        {
+                            "name": "name",
+                            "type": "AMAZON.DE_FIRST_NAME"
+                        }
+                    ],
+                    "samples": [
+                        "Ich heiße {name}",
+                        "Ich bin {name}",
+                        "{name}"
+                    ]
+                },
+                {
+                    "name": "SuggestionIntent",
+                    "slots": [],
+                    "samples": [
+                        "Gibt es noch etwas dass ich gerne mache",
+                        "Hast du noch Ideen",
+                        "Kannst du mir etwas vorschlagen",
+                        "Was kann ich noch tun",
+                        "Vorschläge",
+                        "Vorschlag"
+                    ]
                 }
             ],
             "types": [
@@ -445,25 +471,6 @@
                     ]
                 }
             ]
-        },
-        "dialog": {
-            "intents": [
-                {
-                    "name": "PastActivityIntent",
-                    "confirmationRequired": true,
-                    "prompts": {},
-                    "slots": [
-                        {
-                            "name": "action",
-                            "type": "activities",
-                            "confirmationRequired": false,
-                            "elicitationRequired": false,
-                            "prompts": {}
-                        }
-                    ]
-                }
-            ],
-            "delegationStrategy": "ALWAYS"
         }
     }
 }
