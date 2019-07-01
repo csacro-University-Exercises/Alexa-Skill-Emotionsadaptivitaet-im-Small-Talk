@@ -399,11 +399,10 @@ class Datenbank:
 
 #Klasse Datenbank
 
-
 #Beispiel-Code
-user = "Carolin"
+user = ""
 feel = 0
-act = "asdf"
+act = ""
 futstat = 0
 donestat = 1
 
