@@ -262,7 +262,7 @@ def actionsNeutral():
         return question("Okay, was machst du heute sonst so?")
     elif session.attributes['session_key'] == 'pastgoodnono':
         session.attributes['session_key'] == 'goodmood'
-        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], 0)
+        db.setDoneStatus(session.attributes['userID'], session.attributes['action'], 0)
         return question("Okay, was machst du heute sonst so?")
     elif session.attributes['session_key'] == 'pastgoodno1':
         session.attributes['session_key'] == 'goodmood'
@@ -408,7 +408,7 @@ def actionsBad():
         return question("Okay, was machst du heute sonst noch?")
     elif session.attributes['session_key'] == 'pastgoodnono':
         session.attributes['session_key'] == 'goodmood'
-        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], -1)
+        db.setDoneStatus(session.attributes['userID'], session.attributes['action'], -1)
         return question("Okay, was machst du heute sonst noch?")
     elif session.attributes['session_key'] == 'pastgoodno1':
         session.attributes['session_key'] == 'goodmood'
