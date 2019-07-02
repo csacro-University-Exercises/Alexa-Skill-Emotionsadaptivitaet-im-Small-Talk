@@ -9,6 +9,7 @@ from datenbank import Datenbank
 app = Flask(__name__)
 app.secret_key = "hello"
 ask = Ask(app, '/')
+counter = 1
 
 try:
     db = Datenbank()
@@ -19,7 +20,6 @@ except mysql.connector.errors.Error as e:
 #Beginn des Gespraechs, nach Nutzer fragen
 @ask.launch
 def hello():
-	counter = 1
 	session.attributes['count'] = counter
 	return question('Hallo, wer bist du denn?')
     
@@ -43,13 +43,13 @@ def createuser(name):
         #Es wurde geredet -> Wie ist die Stimmung
         elif db.getUserFeeling(session.attributes['userID']) == 1:
             session.attributes['session_key'] = 'how'
-            return question("Dir geht es heute gut, oder?")
+            return question("Hallo {}, dir geht es heute gut, oder?".format(name))
         elif db.getUserFeeling(session.attributes['userID']) == 0:
             session.attributes['session_key'] = 'how'
-            return question("Wie geht es dir mittlerweile?")
+            return question("Hallo {}, wie geht es dir mittlerweile?".format(name))
         else:
             session.attributes['session_key'] = 'badhow'
-            return question("Geht es dir immer noch schlecht?")
+            return question("Hallo {}, geht es dir immer noch schlecht?".format(name))
 
 #Intent fuer alle positiven Antworten des Nutzers
 @ask.intent('YesIntent')
@@ -602,17 +602,18 @@ def action(action):
 #Vorschlaege fuer weitere Aktivitaeten
 # Nichts als Antwort hinzufuegen!!!
 @ask.intent('SuggestionIntent')
-def suggestion():    
+def suggestion():   
+    global counter 
     act = db.getActivity(session.attributes['userID'], counter)
     if act != None:
         counter += 1
         session.attributes['count'] = counter
         if db.getActivity(session.attributes['userID'], counter) != None:
             session.attributes['session_key'] = 'furthersuggestion'
-            return question("Wie waere es mit {} . Soll ich dir eine weitere Aktivitaet vorschlagen, dann sag bitte Vorschlag oder Ende zum Beenden".format(act[counter]))
+            return question("Wie waere es mit {} . Soll ich dir eine weitere Aktivitaet vorschlagen, dann sag bitte Vorschlag oder Ende zum Beenden".format(act))
         else:
             db.disconnectDatenbank()
-            return statement("Du koenntest {} machen".format(act[counter]))
+            return statement("Du koenntest {}".format(act))
     else:
         db.disconnectDatenbank()
         return statement("Leider kann ich dir noch keine Aktivitaet vorschlagen")
@@ -623,10 +624,17 @@ def tell():
     if activities == None:
         return question("Du hast heute noch nichts geplant")
     else:
-        liste = "Du hast heute"
+        liste = "Du hast heute "
         for i in range(0, len(activities)):
-            liste += act
-        liste += "geplant"
+            if i == (len(activities) -2):
+                liste += activities[i][0]
+                liste += " und "       
+            elif i == (len(activities) - 1):
+                liste += activities[i][0]
+            else:
+                liste += activities[i][0]
+                liste += ", "
+        liste += " geplant"
         return question(liste)
 
 @ask.intent('AMAZON.CancelIntent')
