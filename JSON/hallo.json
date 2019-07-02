@@ -845,25 +845,6 @@
                     ]
                 }
             ]
-        },
-        "dialog": {
-            "intents": [
-                {
-                    "name": "PastActivityIntent",
-                    "confirmationRequired": true,
-                    "prompts": {},
-                    "slots": [
-                        {
-                            "name": "action",
-                            "type": "activities",
-                            "confirmationRequired": false,
-                            "elicitationRequired": false,
-                            "prompts": {}
-                        }
-                    ]
-                }
-            ],
-            "delegationStrategy": "ALWAYS"
-        }
+        }  
     }
 }
