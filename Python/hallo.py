@@ -10,14 +10,15 @@ app = Flask(__name__)
 app.secret_key = "hello"
 ask = Ask(app, '/')
 
+try:
+	db = Datenbank()
+	print "db connected"
+except mysql.connector.errors.Error as e:
+	print "db can not be connected"
+
 #Beginn des Gespraechs, nach Nutzer fragen
 @ask.launch
 def hello():
-	try:
-		db = Datenbank()
-		print "db connected"
-	except mysql.connector.errors.Error as e:
-		print "db can not be connected"
 	counter = 1
 	session.attributes['count'] = counter
 	return question('Hallo, wer bist du denn?')
