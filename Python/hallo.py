@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from flask import Flask
 from flask_ask import Ask, statement, question, session
 import random
@@ -9,18 +11,18 @@ app.secret_key = "hello"
 ask = Ask(app, '/')
 
 try:
-    db = Datenbank()
-    print "db connected"
+	db = Datenbank()
+	print "db connected"
 except mysql.connector.errors.Error as e:
-    print "db can not be connected"
+	print "db can not be connected"
 
 #Beginn des Gespraechs, nach Nutzer fragen
 @ask.launch
 def hello():
-    counter = 1
-    session.attributes['count'] = counter
-    return question('Hallo, wer bist du denn?')
-
+	counter = 1
+	session.attributes['count'] = counter
+	return question('Hallo, wer bist du denn?')
+    
 #User erstellen und Grundstimmung erfragen, name ist Username
 @ask.intent('UserIntent', convert={'name': str})
 def createuser(name):
