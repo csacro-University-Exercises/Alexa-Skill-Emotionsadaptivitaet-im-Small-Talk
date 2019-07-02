@@ -65,6 +65,7 @@
                         }
                     ],
                     "samples": [
+                        "nein"
                         "Ich habe Schmerzen",
                         "Ich fühle mich {schlecht}",
                         "Mir geht es {schlecht}",
@@ -81,6 +82,7 @@
                     ],
                     "samples": [
                         "Ich war {action}",
+                        "Ich musste {action}",
                         "Ich habe {action}",
                         "Ich habe heute {action}",
                         "Ich war heute {action}",
