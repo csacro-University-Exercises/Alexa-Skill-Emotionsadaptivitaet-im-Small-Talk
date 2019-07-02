@@ -106,6 +106,32 @@
                         "Ich werde heute {action}",
                         "Heute werde ich {action}"
                     ]
+                },
+                {
+                    "name": "UserIntent",
+                    "slots": [
+                        {
+                            "name": "name",
+                            "type": "AMAZON.DE_FIRST_NAME"
+                        }
+                    ],
+                    "samples": [
+                        "Ich heiße {name}",
+                        "Ich bin {name}",
+                        "{name}"
+                    ]
+                },
+                {
+                    "name": "SuggestionIntent",
+                    "slots": [],
+                    "samples": [
+                        "Gibt es noch etwas dass ich gerne mache",
+                        "Hast du noch Ideen",
+                        "Kannst du mir etwas vorschlagen",
+                        "Was kann ich noch tun",
+                        "Vorschläge",
+                        "Vorschlag"
+                    ]
                 }
             ],
             "types": [
