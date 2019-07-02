@@ -399,6 +399,7 @@ class Datenbank:
 
 #Klasse Datenbank
 
+"""
 #Beispiel-Code
 user = ""
 feel = 0
@@ -490,6 +491,7 @@ except mysql.connector.errors.Error as e:
 db.disconnectDatenbank()
 print("db closed")
 #Beispiel-Code
+"""
 
 
 if __name__ == '__main__':
