@@ -32,6 +32,7 @@
                         }
                     ],
                     "samples": [
+                        "Doch",
                         "Ich fühle mich {gut}",
                         "Mir geht es {gut}",
                         "sicher",
@@ -90,6 +91,16 @@
                     ]
                 },
                 {
+                    "name": "TellFutureIntent",
+                    "slots": [],
+                    "samples": [
+                        "Kannst du mir sagen was ich machen wollte",
+                        "Was wollte ich noch machen",
+                        "Was",
+                        "Was habe ich heute noch geplant"
+                    ]
+                },
+                {
                     "name": "FutureActivityIntent",
                     "slots": [
                         {
@@ -125,6 +136,7 @@
                     "name": "SuggestionIntent",
                     "slots": [],
                     "samples": [
+                        "nichts",
                         "Gibt es noch etwas dass ich gerne mache",
                         "Hast du noch Ideen",
                         "Kannst du mir etwas vorschlagen",
