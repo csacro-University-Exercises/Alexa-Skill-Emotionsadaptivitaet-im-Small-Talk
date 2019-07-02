@@ -393,7 +393,7 @@ class Datenbank:
         """
         try:
             self.deleteFutureActivity(userId, activity)
-            self.setFutureStatus(userId, activity, status)
+            self.setDoneStatus(userId, activity, status)
         except mysql.connector.errors.Error as e:
             raise
 
