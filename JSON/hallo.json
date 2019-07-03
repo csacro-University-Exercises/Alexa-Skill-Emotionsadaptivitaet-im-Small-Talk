@@ -17,7 +17,12 @@
                 },
                 {
                     "name": "AMAZON.StopIntent",
-                    "samples": []
+                    "samples": [
+                        "Schluss",
+                        "aufhören",
+                        "Stopp",
+                        "Ende"
+                    ]
                 },
                 {
                     "name": "AMAZON.NavigateHomeIntent",
