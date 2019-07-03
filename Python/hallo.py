@@ -22,6 +22,12 @@ except mysql.connector.errors.Error as e:
 def hello():
 	session.attributes['count'] = counter
 	return question('Hallo, wer bist du denn?')
+
+#Intent zum Beenden
+@ask.intent('AMAZON.StopIntent')
+def cancel():
+    db.disconnectDatenbank()
+    return statement('Okay ich beende mich jetzt')
     
 #User erstellen und Grundstimmung erfragen, name ist Username
 @ask.intent('UserIntent', convert={'name': str})
@@ -343,7 +349,6 @@ def actionsBad():
         return question("Freut mich, dass es dir besser geht. Was machst du denn heute so?")
     elif session.attributes['session_key'] == 'shutdown':
         session.attributes['session_key'] == 'badmood'
-        db.setUserFeeling(session.attributes['userID'], -1)
         return question("Okay, was verdirbt dir denn dann deinen Tag?")
     elif session.attributes['session_key'] == 'maybetalkin':
         db.disconnectDatenbank()
@@ -595,12 +600,12 @@ def action(action):
             elif db.getDoneStatus(session.attributes['userID'], action) == -1:
                 session.attributes['session_key'] = 'futbadno-1'
                 return question("Du freust dich normal nicht darauf, heute bestimmt auch nicht?")
+#FEHLER, aber warum??
             else:
                 session.attributes['session_key'] = 'futbadnono'
                 return question("Freust du dich?")
 
 #Vorschlaege fuer weitere Aktivitaeten
-# Nichts als Antwort hinzufuegen!!!
 @ask.intent('SuggestionIntent')
 def suggestion():   
     global counter 
@@ -618,6 +623,7 @@ def suggestion():
         db.disconnectDatenbank()
         return statement("Leider kann ich dir noch keine Aktivitaet vorschlagen")
 
+#geplante Aktivitaeten sagen
 @ask.intent('TellFutureIntent')
 def tell():
     activities = db.getFutureActivities(session.attributes['userID'])
@@ -637,10 +643,7 @@ def tell():
         liste += " geplant"
         return question(liste)
 
-@ask.intent('AMAZON.CancelIntent')
-def cancel():
-    db.disconnectDatenbank()
-    return statement('Okay ich beende mich jetzt')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
