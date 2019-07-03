@@ -29,6 +29,42 @@
                     "samples": []
                 },
                 {
+                    "name": "UserIntent",
+                    "slots": [
+                        {
+                            "name": "name",
+                            "type": "AMAZON.DE_FIRST_NAME"
+                        }
+                    ],
+                    "samples": [
+                        "Ich heiße {name}",
+                        "Ich bin {name}",
+                        "{name}"
+                    ]
+                },
+                {
+                    "name": "SuggestionIntent",
+                    "slots": [],
+                    "samples": [
+                        "nichts",
+                        "Gibt es noch etwas dass ich gerne mache",
+                        "Hast du noch Ideen",
+                        "Kannst du mir etwas vorschlagen",
+                        "Vorschläge",
+                        "Vorschlag"
+                    ]
+                },
+                {
+                    "name": "TellFutureIntent",
+                    "slots": [],
+                    "samples": [
+                        "Kannst du mir sagen was ich machen wollte",
+                        "Was wollte ich noch machen",
+                        "Was",
+                        "Was habe ich heute noch geplant"
+                    ]
+                },
+                {
                     "name": "YesIntent",
                     "slots": [
                         {
@@ -37,6 +73,7 @@
                         }
                     ],
                     "samples": [
+                        "richtig",
                         "Doch",
                         "Ich fühle mich {gut}",
                         "Mir geht es {gut}",
@@ -70,7 +107,8 @@
                         }
                     ],
                     "samples": [
-                        "nein"
+                        "falsch",
+                        "nein",
                         "Ich habe Schmerzen",
                         "Ich fühle mich {schlecht}",
                         "Mir geht es {schlecht}",
@@ -87,7 +125,6 @@
                     ],
                     "samples": [
                         "Ich war {action}",
-                        "Ich musste {action}",
                         "Ich habe {action}",
                         "Ich habe heute {action}",
                         "Ich war heute {action}",
@@ -95,16 +132,6 @@
                         "Ich habe mich {action}",
                         "Ich bin {action}",
                         "Heute bin ich {action}"
-                    ]
-                },
-                {
-                    "name": "TellFutureIntent",
-                    "slots": [],
-                    "samples": [
-                        "Kannst du mir sagen was ich machen wollte",
-                        "Was wollte ich noch machen",
-                        "Was",
-                        "Was habe ich heute noch geplant"
                     ]
                 },
                 {
@@ -123,33 +150,6 @@
                         "Ich werde {action}",
                         "Ich werde heute {action}",
                         "Heute werde ich {action}"
-                    ]
-                },
-                {
-                    "name": "UserIntent",
-                    "slots": [
-                        {
-                            "name": "name",
-                            "type": "AMAZON.DE_FIRST_NAME"
-                        }
-                    ],
-                    "samples": [
-                        "Ich heiße {name}",
-                        "Ich bin {name}",
-                        "{name}"
-                    ]
-                },
-                {
-                    "name": "SuggestionIntent",
-                    "slots": [],
-                    "samples": [
-                        "nichts",
-                        "Gibt es noch etwas dass ich gerne mache",
-                        "Hast du noch Ideen",
-                        "Kannst du mir etwas vorschlagen",
-                        "Was kann ich noch tun",
-                        "Vorschläge",
-                        "Vorschlag"
                     ]
                 }
             ],
@@ -387,6 +387,7 @@
                             "name": {
                                 "value": "einen Film anschauen",
                                 "synonyms": [
+                                    "einen Film schauen",
                                     "einen Film sehen",
                                     "einen Film angeschaut",
                                     "einen Film angesehen"
@@ -397,6 +398,7 @@
                             "name": {
                                 "value": "eine Serie anschauen",
                                 "synonyms": [
+                                    "eine Serie schauen",
                                     "einen Serie sehen",
                                     "einen Serie angeschaut",
                                     "einen Serie angesehen"
@@ -407,6 +409,7 @@
                             "name": {
                                 "value": "fernsehen",
                                 "synonyms": [
+                                    "fernseh schauen",
                                     "fernsehen",
                                     "fernseh geschaut"
                                 ]
@@ -864,6 +867,6 @@
                     ]
                 }
             ]
-        }  
+        }
     }
 }
