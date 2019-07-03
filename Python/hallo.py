@@ -26,7 +26,6 @@ def hello():
 #Intent zum Beenden
 @ask.intent('AMAZON.StopIntent')
 def cancel():
-    db.disconnectDatenbank()
     return statement('Okay ich beende mich jetzt')
     
 #User erstellen und Grundstimmung erfragen, name ist Username
@@ -70,7 +69,6 @@ def actionsGood():
         return question("Soll ich dich dann in Ruhe lassen?")
     elif session.attributes['session_key'] == 'shutdown':
         db.setUserFeeling(session.attributes['userID'], -1)
-        db.disconnectDatenbank()
         return statement("Okay, dann lasse ich dich in Ruhe.")
     elif session.attributes['session_key'] == 'maybetalkin':
         session.attributes['session_key'] == 'neutralmood'
@@ -351,7 +349,6 @@ def actionsBad():
         session.attributes['session_key'] == 'badmood'
         return question("Okay, was verdirbt dir denn dann deinen Tag?")
     elif session.attributes['session_key'] == 'maybetalkin':
-        db.disconnectDatenbank()
         return statement("Okay, dann lasse ich dich in Ruhe")
 
 
@@ -602,8 +599,8 @@ def action(action):
                 return question("Du freust dich normal nicht darauf, heute bestimmt auch nicht?")
 #FEHLER, aber warum??
             else:
-                session.attributes['session_key'] = 'futbadnono'
-                return question("Freust du dich?")
+                session.attributes['session_key'] = 'badmood'
+                return question("Das ist schade. Was machst du sonst so?")
 
 #Vorschlaege fuer weitere Aktivitaeten
 @ask.intent('SuggestionIntent')
@@ -617,10 +614,8 @@ def suggestion():
             session.attributes['session_key'] = 'furthersuggestion'
             return question("Wie waere es mit {} . Soll ich dir eine weitere Aktivitaet vorschlagen, dann sag bitte Vorschlag oder Ende zum Beenden".format(act))
         else:
-            db.disconnectDatenbank()
             return statement("Du koenntest {}".format(act))
     else:
-        db.disconnectDatenbank()
         return statement("Leider kann ich dir noch keine Aktivitaet vorschlagen")
 
 #geplante Aktivitaeten sagen
