@@ -20,6 +20,7 @@ def hello():
         db.connectDatenbank()
         print "db (re)connected"
         session.attributes['count'] = counter
+        session.attributes['userKnown'] = False
         return question('Hallo, wer bist du denn?')
     except mysql.connector.errors.Error as e:
         print "db can not be (re)connected"
@@ -34,14 +35,18 @@ def cancel():
 @ask.intent('UserIntent', convert={'name': str})
 def createuser(name):
     print("UserIntent")
+    if(session.attributes['userKnown']):
+        return question("Ich bin durcheinander gekommen, entschuldige. Was machst du heute sonst so?")
     session.attributes['session_key'] = 'how'
     userId = db.getUser(name)
     if userId == None:
         session.attributes['userID'] = db.createUser(name)
+        session.attributes['userKnown'] = True
         session.attributes['session_key'] = 'how'
         return question("Hallo {}, wie geht es dir heute?".format(name))
     else:
         session.attributes['userID'] = userId
+        session.attributes['userKnown'] = True
         userFeeling = db.getUserFeeling(userId)
         userFeelingKeySwitcher = {
             1: 'how',
@@ -170,8 +175,6 @@ def actionsGood():
         'pastbad1': "Okay, was machst du heute sonst so?",
         'pastbad0': "Okay, was machst du heute sonst so?",
         'pastbad-1': "Okay, was machst du heute sonst so?"
-
-
     }
 
     session.attributes['session_key'] = sessionKeyKeySwitcher.get(sessionkey, 'how')
