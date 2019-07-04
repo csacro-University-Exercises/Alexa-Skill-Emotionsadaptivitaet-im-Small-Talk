@@ -11,600 +11,590 @@ app.secret_key = "hello"
 ask = Ask(app, '/')
 counter = 1
 
-try:
-    db = Datenbank()
-    print "db connected"
-except mysql.connector.errors.Error as e:
-    print "db can not be connected"
+db = Datenbank()
 
-#Beginn des Gespraechs, nach Nutzer fragen
 @ask.launch
 def hello():
-	session.attributes['count'] = counter
-	return question('Hallo, wer bist du denn?')
+    print("launch")
+    try:
+        db.connectDatenbank()
+        print "db (re)connected"
+        session.attributes['count'] = counter
+        return question('Hallo, wer bist du denn?')
+    except mysql.connector.errors.Error as e:
+        print "db can not be (re)connected"
 
-#Intent zum Beenden
 @ask.intent('AMAZON.StopIntent')
 def cancel():
+    print("cancel")
+    db.disconnectDatenbank()
+    print("db disconnected")
     return statement('Okay ich beende mich jetzt')
-    
-#User erstellen und Grundstimmung erfragen, name ist Username
+
 @ask.intent('UserIntent', convert={'name': str})
 def createuser(name):
+    print("UserIntent")
     session.attributes['session_key'] = 'how'
-    #kein User mit dem Name vorhanden -> neuen erstellen
-    if db.getUser(name) == None:
-        db.createUser(name)
-        session.attributes['userID'] = db.getUser(name)
+    userId = db.getUser(name)
+    if userId == None:
+        session.attributes['userID'] = db.createUser(name)
         session.attributes['session_key'] = 'how'
         return question("Hallo {}, wie geht es dir heute?".format(name))
-    #User vorhanden    
     else:
-        session.attributes['userID'] = db.getUser(name)
-        #ueberpruefen, ob heute bereits geredet wurde
-        if db.getUserFeeling(session.attributes['userID']) == None:
-            session.attributes['session_key'] = 'how'
-            return question("Hallo {}, schoen dich wieder zu sehen, wie geht es dir heute?".format(name))
-        #Es wurde geredet -> Wie ist die Stimmung
-        elif db.getUserFeeling(session.attributes['userID']) == 1:
-            session.attributes['session_key'] = 'how'
-            return question("Hallo {}, dir geht es heute gut, oder?".format(name))
-        elif db.getUserFeeling(session.attributes['userID']) == 0:
-            session.attributes['session_key'] = 'how'
-            return question("Hallo {}, wie geht es dir mittlerweile?".format(name))
-        else:
-            session.attributes['session_key'] = 'badhow'
-            return question("Hallo {}, geht es dir immer noch schlecht?".format(name))
+        session.attributes['userID'] = userId
+        userFeeling = db.getUserFeeling(userId)
+        userFeelingKeySwitcher = {
+            1: 'how',
+            0: 'how',
+            -1: 'badhow'
+        }
+        userFeelingAnswSwitcher = {
+            1: "Hallo {}, dir geht es heute gut, oder?",
+            0: "Hallo {}, wie geht es dir mittlerweile?",
+            -1: "Hallo {}, geht es dir immer noch schlecht?"
+        }
 
-#Intent fuer alle positiven Antworten des Nutzers
+        session.attributes['session_key'] = userFeelingKeySwitcher.get(userFeeling, 'how')
+
+        answ = userFeelingAnswSwitcher.get(userFeeling, "Hallo {}, schoen dich wieder zu sehen, wie geht es dir heute?")
+        return question(str(answ).format(name))
+
 @ask.intent('YesIntent')
 def actionsGood():
-    if session.attributes['session_key'] == 'how' :
-        db.setUserFeeling(session.attributes['userID'], 1)
-        session.attributes['session_key'] = 'goodmood'
-        return question("Freut mich, dass es dir gut geht. Was machst du heute so?")
-    elif session.attributes['session_key'] == 'badhow' :
-        session.attributes['session_key'] = 'shutdown'
-        db.setUserFeeling(session.attributes['userID'], -1)
-        return question("Soll ich dich dann in Ruhe lassen?")
-    elif session.attributes['session_key'] == 'shutdown':
-        db.setUserFeeling(session.attributes['userID'], -1)
-        return statement("Okay, dann lasse ich dich in Ruhe.")
-    elif session.attributes['session_key'] == 'maybetalkin':
-        session.attributes['session_key'] == 'neutralmood'
-        return question("Okay, was machst du heute sonst so?")
+    print("YesIntent")
+    sessionkey = session.attributes['session_key']
+    sessionKeyKeySwitcher = {
+        'how': 'goodmood',
+        'badhow': 'shutdown',
+        'shutdown': 'shutdown',
+        'maybetalkin': 'neutralmood',
+        'futgoodnono': 'neutralmood',
+        'futgoodnono-1': 'neutralmood',
+        'futgoodno0': 'neutralmood',
+        'futgoodno1': 'neutralmood',
+        'futgood1': 'neutralmood',
+        'futgood0': 'neutralmood',
+        'futgood-1': 'neutralmood',
+        'futbad1': 'badmood',
+        'futbad0': 'badmood',
+        'futbad-1': 'badmood',
+        'futbadnono': 'badmood',
+        'futbadno1': 'badmood',
+        'futbadno0': 'badmood',
+        'futbadno-1': 'badmood',
+        'pastgoodnono': 'goodmood',
+        'pastgoodno1': 'goodmood',
+        'pastgoodno0': 'goodmood',
+        'pastgoodno-1': 'neutralmood',
+        'pastgood1': 'neutralmood',
+        'pastgood0': 'neutralmood',
+        'pastgood-1': 'neutralmood',
+        'pastbadnono': 'badmood',
+        'pastbadno1': 'badmood',
+        'pastbadno0': 'badmood',
+        'pastbadno-1': 'badmood',
+        'pastbad1': 'badmood',
+        'pastbad0': 'badmood',
+        'pastbad-1': 'badmood'
+    }
+    sessionKeyFeelingSwitcher = {
+        'how': 1,
+        'badhow': -1,
+        'shutdown': -1,
+        'maybetalkin': 0
+    }
+    sessionKeyFuturestatusSwitcher = {
+        'futgoodnono': 1,
+        'futgoodnono-1': 1,
+        'futgoodno0': 1,
+        'futgoodno1': 1,
+        'futgood1': 1,
+        'futgood0': 1,
+        'futgood-1': -1,
+        'futbad1': -1,
+        'futbad0': -1,
+        'futbad-1': 1,
+        'futbadnono': 1,
+        'futbadno1': 1,
+        'futbadno0': 1,
+        'futbadno-1': -1
+    }
+    sessionKeyDonestatusSwitcher = {
+        'pastgoodnono': 1,
+        'pastgoodno1': 1,
+        'pastgoodno0': 1,
+        'pastgoodno-1': 1,
+        'pastbadnono': 1,
+        'pastbadno1': 1,
+        'pastbadno0': 1,
+        'pastbadno-1': -1,
+        'pastbad1': 1,
+        'pastbad0': 0,
+        'pastbad-1': -1
+    }
+    sessionKeyFuture2DoneSwitcher = {
+        'pastgood1': 1,
+        'pastgood0': 0,
+        'pastgood-1': -1,
+    }
+    sessionKeyAnswSwitcher = {
+        'how': "Freut mich, dass es dir gut geht. Was machst du heute so?",
+        'badhow': "Soll ich dich dann in Ruhe lassen?",
+        'shutdown': "Okay, dann lasse ich dich in Ruhe.",
+        'maybetalkin': "Okay, was machst du heute sonst so?",
+        'futgoodnono': "Das freut mich. Was machst du heute sonst so?",
+        'futgoodnono-1': "Okay, was machst du heute sonst so?",
+        'futgoodno0': "Das freut mich. Was machst du heute sonst so?",
+        'futgoodno1': "Das freut mich. Was machst du heute sonst so?",
+        'futgood1': "Okay, was machst du heute sonst so?",
+        'futgood0': "Okay, was machst du heute sonst so?",
+        'futgood-1': "Okay, was machst du heute sonst so?",
+        'futbad1': "Okay, was machst du heute sonst so?",
+        'futbad0': "Okay, was machst du heute sonst so?",
+        'futbad-1': "Okay, was machst du heute sonst so?",
+        'futbadnono': "Okay, was machst du heute sonst so?",
+        'futbadno1': "Okay, was machst du heute sonst so?",
+        'futbadno0': "Okay, was machst du heute sonst so?",
+        'futbadno-1': "Okay, was machst du heute sonst so?",
+        'pastgoodnono': "Okay, was machst du heute sonst so?",
+        'pastgoodno1': "Okay, was machst du heute sonst so?",
+        'pastgoodno0': "Okay, was machst du heute sonst so?",
+        'pastgoodno-1': "Okay, was machst du heute sonst so?",
+        'pastgood1': "Okay, was machst du heute sonst so?",
+        'pastgood0': "Okay, was machst du heute sonst so?",
+        'pastgood-1': "Okay, was machst du heute sonst so?",
+        'pastbadnono': "Okay, was machst du heute sonst so?",
+        'pastbadno1': "Okay, was machst du heute sonst so?",
+        'pastbadno0': "Okay, was machst du heute sonst so?",
+        'pastbadno-1': "Okay, was machst du heute sonst so?",
+        'pastbad1': "Okay, was machst du heute sonst so?",
+        'pastbad0': "Okay, was machst du heute sonst so?",
+        'pastbad-1': "Okay, was machst du heute sonst so?"
 
-    elif session.attributes['session_key'] == 'futgoodnono':
-        session.attributes['session_key'] == 'neutralmood'
-        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], 1)
-        return question("Das freut mich. Was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'futgoodno-1':
-        session.attributes['session_key'] == 'neutralmood'
-        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], 1)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'futgoodno0':
-        session.attributes['session_key'] == 'neutralmood'
-        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], 1)
-        return question("Das freut mich. Was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'futgoodno1':
-        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], 1)
-        session.attributes['session_key'] == 'neutralmood'
-        return question("Das freut mich. Was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'futgood1':
-        session.attributes['session_key'] == 'neutralmood'
-        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], 1)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'futgood0':
-        session.attributes['session_key'] == 'neutralmood'
-        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], 1)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'futgood-1':
-        session.attributes['session_key'] == 'neutralmood'
-        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], -1)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'futbad1':
-        session.attributes['session_key'] == 'badmood'
-        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], -1)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'futbad0':
-        session.attributes['session_key'] == 'badmood'
-        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], -1)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'futbad-1':
-        session.attributes['session_key'] == 'badmood'
-        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], 1)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'futbadnono':
-        session.attributes['session_key'] == 'badmood'
-        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], 1)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'futbadno1':
-        session.attributes['session_key'] == 'badmood'
-        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], 1)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'futbadno0':
-        session.attributes['session_key'] == 'badmood'
-        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], 1)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'futbadno-1':
-        session.attributes['session_key'] == 'badmood'
-        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], -1)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'pastgoodnono':
-        session.attributes['session_key'] == 'goodmood'
-        db.setDoneStatus(session.attributes['userID'], session.attributes['action'], 1)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'pastgoodno1':
-        session.attributes['session_key'] == 'goodmood'
-        db.setDoneStatus(session.attributes['userID'], session.attributes['action'], 1)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'pastgoodno0':
-        db.setDoneStatus(session.
-attributes['userID'], session.attributes['action'], 1)
-        session.attributes['session_key'] == 'goodmood'
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'pastgoodno-1':
-        session.attributes['session_key'] == 'neutralmood'
-        db.setDoneStatus(session.
-attributes['userID'], session.attributes['action'], 1)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'pastgood1':
-        session.attributes['session_key'] == 'neutralmood'
-        db.moveFutureActivityToDone(session.
-attributes['userID'], session.attributes['action'], 1)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'pastgood0':
-        session.attributes['session_key'] == 'neutralmood'
-        db.moveFutureActivityToDone(session.
-attributes['userID'], session.attributes['action'], 0)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'pastgood-1':
-        session.attributes['session_key'] == 'neutralmood'
-        db.moveFutureActivityToDone(session.
-attributes['userID'], session.attributes['action'], -1)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'pastbadnono':
-        session.attributes['session_key'] == 'badmood'
-        db.setDoneStatus(session.
-attributes['userID'], session.attributes['action'], 1)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'pastbadno1':
-        session.attributes['session_key'] == 'badmood'
-        db.setDoneStatus(session.
-attributes['userID'], session.attributes['action'], 1)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'pastbadno0':
-        session.attributes['session_key'] == 'badmood'
-        db.setDoneStatus(session.
-attributes['userID'], session.attributes['action'], 1)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'pastbadno-1':
-        session.attributes['session_key'] == 'badmood'
-        db.setDoneStatus(session.
-attributes['userID'], session.attributes['action'], -1)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'pastbad1':
-        session.attributes['session_key'] == 'badmood'
-        db.setDoneStatus(session.
-attributes['userID'], session.attributes['action'], 1)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'pastbad0':
-        session.attributes['session_key'] == 'badmood'
-        db.setDoneStatus(session.
-attributes['userID'], session.attributes['action'], 0)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'pastbad-1':
-        session.attributes['session_key'] == 'badmood'
-        db.setDoneStatus(session.
-attributes['userID'], session.attributes['action'], -1)
-        return question("Okay, was machst du heute sonst so?")
-   
 
-#Intent fuer alle neutralen Antworten   
+    }
+
+    session.attributes['session_key'] = sessionKeyKeySwitcher.get(sessionkey, 'how')
+
+    feeling = sessionKeyFeelingSwitcher.get(sessionkey, None)
+    futurestatus = sessionKeyFuturestatusSwitcher.get(sessionkey, None)
+    donestatus = sessionKeyDonestatusSwitcher.get(sessionkey, None)
+    future2done = sessionKeyFuture2DoneSwitcher.get(sessionkey, None)
+    if(feeling != None):
+        db.setUserFeeling(session.attributes['userID'], feeling)
+    if(futurestatus != None):
+        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], futurestatus)
+    if(donestatus != None):
+        db.setDoneStatus(session.attributes['userID'], session.attributes['action'], donestatus)
+    if(future2done != None):
+        db.moveFutureActivityToDone(session.attributes['userID'], session.attributes['action'], future2done)
+
+    answ = sessionKeyAnswSwitcher.get(sessionkey, "Was machst du heute sonst so?")
+    if(session.attributes['session_key'] == 'shutdown'):
+        db.disconnectDatenbank()
+        return statement(answ)
+    else:
+        return question(answ)
+
 @ask.intent('NeutralIntent')
 def actionsNeutral():
-    if session.attributes['session_key']=='how':
-        session.attributes['session_key'] = 'maybetalkin'
-        db.setUserFeeling(session.attributes['userID'], 0)
-        return question("Hast du Lust zu reden?")
+    print("NeutralIntent")
+    sessionkey = session.attributes['session_key']
+    sessionKeyKeySwitcher = {
+        'how': 'maybetalkin',
+        'futgoodnono': 'neutralmood',
+        'futgoodno-1': 'neutralmood',
+        'futgoodno0': 'neutralmood',
+        'futgoodno1': 'neutralmood',
+        'futgood1': 'neutralmood',
+        'futgood0': 'neutralmood',
+        'futgood-1': 'neutralmood',
+        'futbad1': 'badmood',
+        'futbad0': 'badmood',
+        'futbad-1': 'badmood',
+        'futbadnono': 'badmood',
+        'futbadno1': 'badmood',
+        'futbadno0': 'badmood',
+        'futbadno-1': 'badmood',
+        'pastgoodnono': 'goodmood',
+        'pastgoodno1': 'goodmood',
+        'pastgoodno0': 'goodmood',
+        'pastgoodno-1': 'neutralmood',
+        'pastgood1': 'neutralmood',
+        'pastgood0': 'neutralmood',
+        'pastgood-1': 'neutralmood',
+        'pastbadnono': 'badmood',
+        'pastbadno1': 'badmood',
+        'pastbadno0': 'badmood',
+        'pastbadno-1': 'badmood',
+        'pastbad1': 'badmood',
+        'pastbad0': 'badmood',
+        'pastbad-1': 'badmood'
+    }
+    sessionKeyFeelingSwitcher = {
+        'how': 0
+    }
+    sessionKeyFuturestatusSwitcher = {
+        'futgoodnono': 0,
+        'futgoodno-1': 0,
+        'futgoodno0': 0,
+        'futgoodno1': 0,
+        'futgood1': 0,
+        'futgood0': 0,
+        'futgood-1': 0,
+        'futbad1': 0,
+        'futbad0': 0,
+        'futbad-1': 0,
+        'futbadnono': 0,
+        'futbadno1': 0,
+        'futbadno0': 0,
+        'futbadno-1': 0
+    }
+    sessionKeyDonestatusSwitcher = {
+        'pastgoodnono': 0,
+        'pastgoodno1': 0,
+        'pastgoodno0': 0,
+        'pastgoodno-1': 0,
+        'pastbadnono': 0,
+        'pastbadno1': 0,
+        'pastbadno0': 0,
+        'pastbadno-1': 0,
+        'pastbad1': 0,
+        'pastbad0': 0,
+        'pastbad-1': 0
+    }
+    sessionKeyFuture2DoneSwitcher = {
+        'pastgood1': 0,
+        'pastgood0': 0,
+        'pastgood-1': 0
+    }
+    sessionKeyAnswSwitcher = {
+        'how': "Hast du Lust zu reden?",
+        'futgoodnono': "Okay, was machst du heute sonst so?",
+        'futgoodno-1': "Okay, was machst du heute sonst so?",
+        'futgoodno0': "Okay, was machst du heute sonst so?",
+        'futgoodno1': "Okay, was machst du heute sonst so?",
+        'futgood1': "Okay, was machst du heute sonst so?",
+        'futgood0': "Okay, was machst du heute sonst so?",
+        'futgood-1': "Okay, was machst du heute sonst so?",
+        'futbad1': "Okay, was machst du heute sonst so?",
+        'futbad0': "Okay, was machst du heute sonst so?",
+        'futbad-1': "Okay, was machst du heute sonst so?",
+        'futbadnono': "Okay, was machst du heute sonst so?",
+        'futbadno1': "Okay, was machst du heute sonst so?",
+        'futbadno0': "Okay, was machst du heute sonst so?",
+        'futbadno-1': "Okay, was machst du heute sonst so?",
+        'pastgoodnono': "Okay, was machst du heute sonst so?",
+        'pastgoodno1': "Okay, was machst du heute sonst so?",
+        'pastgoodno0': "Okay, was machst du heute sonst so?",
+        'pastgoodno-1': "Okay, was machst du heute sonst so?",
+        'pastgood1': "Okay, was machst du heute sonst so?",
+        'pastgood0': "Okay, was machst du heute sonst so?",
+        'pastgood-1': "Okay, was machst du heute sonst so?",
+        'pastbadnono': "Okay, was machst du heute sonst so?",
+        'pastbadno1': "Okay, was machst du heute sonst so?",
+        'pastbadno0': "Okay, was machst du heute sonst so?",
+        'pastbadno-1': "Okay, was machst du heute sonst so?",
+        'pastbad1': "Okay, was machst du heute sonst so?",
+        'pastbad0': "Okay, was machst du heute sonst so?",
+        'pastbad-1': "Okay, was machst du heute sonst so?"
+    }
 
-    elif session.attributes['session_key'] == 'futgoodnono':
-        session.attributes['session_key'] == 'neutralmood'
-        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], 0)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'futgoodno-1':
-        session.attributes['session_key'] == 'neutralmood'
-        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], 0)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'futgoodno0':
-        session.attributes['session_key'] == 'neutralmood'
-        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], 0)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'futgoodno1':
-        session.attributes['session_key'] == 'neutralmood'
-        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], 0)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'futgood1':
-        session.attributes['session_key'] == 'neutralmood'
-        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], 0)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'futgood0':
-        session.attributes['session_key'] == 'neutralmood'
-        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], 0)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'futgood-1':
-        session.attributes['session_key'] == 'neutralmood'
-        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], 0)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'futbad1':
-        session.attributes['session_key'] == 'badmood'
-        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], 0)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'futbad0':
-        session.attributes['session_key'] == 'badmood'
-        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], 0)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'futbad-1':
-        session.attributes['session_key'] == 'badmood'
-        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], 0)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'futbadnono':
-        session.attributes['session_key'] == 'badmood'
-        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], 0)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'futbadno1':
-        session.attributes['session_key'] == 'badmood'
-        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], 0)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'futbadno0':
-        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], 0)
-        session.attributes['session_key'] == 'badmood'
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'futbadno-1':
-        session.attributes['session_key'] == 'badmood'
-        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], 0)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'pastgoodnono':
-        session.attributes['session_key'] == 'goodmood'
-        db.setDoneStatus(session.attributes['userID'], session.attributes['action'], 0)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'pastgoodno1':
-        session.attributes['session_key'] == 'goodmood'
-        db.setDoneStatus(session.
-attributes['userID'], session.attributes['action'], 0)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'pastgoodno0':
-        session.attributes['session_key'] == 'goodmood'
-        db.setDoneStatus(session.
-attributes['userID'], session.attributes['action'], 0)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'pastgoodno-1':
-        session.attributes['session_key'] == 'neutralmood'
-        db.setDoneStatus(session.
-attributes['userID'], session.attributes['action'], 0)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'pastgood1':
-        session.attributes['session_key'] == 'neutralmood'
-        db.moveFutureActivityToDone(session.
-attributes['userID'], session.attributes['action'], 0)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'pastgood0':
-        session.attributes['session_key'] == 'neutralmood'
-        db.moveFutureActivityToDone(session.
-attributes['userID'], session.attributes['action'], 0)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'pastgood-1':
-        session.attributes['session_key'] == 'neutralmood'
-        db.moveFutureActivityToDone(session.
-attributes['userID'], session.attributes['action'], 0)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'pastbadnono':
-        session.attributes['session_key'] == 'badmood'
-        db.setDoneStatus(session.
-attributes['userID'], session.attributes['action'], 0)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'pastbadno1':
-        db.setDoneStatus(session.
-attributes['userID'], session.attributes['action'], 0)
-        session.attributes['session_key'] == 'badmood'
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'pastbadno0':
-        session.attributes['session_key'] == 'badmood'
-        db.setDoneStatus(session.
-attributes['userID'], session.attributes['action'], 0)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'pastbadno-1':
-        session.attributes['session_key'] == 'badmood'
-        db.setDoneStatus(session.
-attributes['userID'], session.attributes['action'], 0)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'pastbad1':
-        session.attributes['session_key'] == 'badmood'
-        db.setDoneStatus(session.
-attributes['userID'], session.attributes['action'], 0)
-        return question("Okay, was machst du heute sonst so?")
-    elif session.attributes['session_key'] == 'pastbad0':
-        db.setDoneStatus(session.
-attributes['userID'], session.attributes['action'], 0)
-        session.attributes['session_key'] == 'badmood'
-        return question("Okay, was machst du heute sonst noch?")
-    elif session.attributes['session_key'] == 'pastbad-1':
-        session.attributes['session_key'] == 'badmood'
-        db.setDoneStatus(session.
-attributes['userID'], session.attributes['action'], 0)
-        return question("Okay, was machst du heute sonst noch?")
+    session.attributes['session_key'] = sessionKeyKeySwitcher.get(sessionkey, 'how')
 
-#Intent fuer alle schlechten Antworten
+    feeling = sessionKeyFeelingSwitcher.get(sessionkey, None)
+    futurestatus = sessionKeyFuturestatusSwitcher.get(sessionkey, None)
+    donestatus = sessionKeyDonestatusSwitcher.get(sessionkey, None)
+    future2done = sessionKeyFuture2DoneSwitcher.get(sessionkey, None)
+    if (feeling != None):
+        db.setUserFeeling(session.attributes['userID'], feeling)
+    if (futurestatus != None):
+        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], futurestatus)
+    if (donestatus != None):
+        db.setDoneStatus(session.attributes['userID'], session.attributes['action'], donestatus)
+    if (future2done != None):
+        db.moveFutureActivityToDone(session.attributes['userID'], session.attributes['action'], future2done)
+
+    answ = sessionKeyAnswSwitcher.get(sessionkey, "Was machst du heute sonst so?")
+    return question(answ)
+
 @ask.intent('NoIntent')
 def actionsBad():
-    if session.attributes['session_key']=='how':
-        session.attributes['session_key'] = 'shutdown'
-        db.setUserFeeling(session.attributes['userID'], -1)
-        return question("Soll ich dich dann lieber in Ruhe lassen?")
-    elif session.attributes['session_key'] == 'badhow':
-        session.attributes['session_key'] == 'neutralmood'
-        db.setUserFeeling(session.attributes['userID'], 1)
-        return question("Freut mich, dass es dir besser geht. Was machst du denn heute so?")
-    elif session.attributes['session_key'] == 'shutdown':
-        session.attributes['session_key'] == 'badmood'
-        return question("Okay, was verdirbt dir denn dann deinen Tag?")
-    elif session.attributes['session_key'] == 'maybetalkin':
-        return statement("Okay, dann lasse ich dich in Ruhe")
+    print("NoIntent")
+    sessionkey = session.attributes['session_key']
+    sessionKeyKeySwitcher = {
+        'how': 'shutdown',
+        'badhow': 'neutralmood',
+        'shutdown': 'badmood',
+        'futgoodnono': 'neutralmood',
+        'futgoodno-1': 'neutralmood',
+        'futgoodno0': 'neutralmood',
+        'futgoodno1': 'neutralmood',
+        'futgood1': 'neutralmood',
+        'futgood0': 'neutralmood',
+        'futgood-1': 'neutralmood',
+        'futbad1': 'badmood',
+        'futbad0': 'badmood',
+        'futbad-1': 'badmood',
+        'futbadnono': 'badmood',
+        'futbadno1': 'badmood',
+        'futbadno0': 'badmood',
+        'futbadno-1': 'badmood',
+        'pastgoodnono': 'goodmood',
+        'pastgoodno1': 'goodmood',
+        'pastgoodno0': 'goodmood',
+        'pastgoodno-1': 'neutralmood',
+        'pastgood1': 'neutralmood',
+        'pastgood0': 'neutralmood',
+        'pastgood-1': 'neutralmood',
+        'pastbadnono': 'badmood',
+        'pastbadno1': 'badmood',
+        'pastbadno0': 'badmood',
+        'pastbadno-1': 'badmood',
+        'pastbad1': 'badmood',
+        'pastbad0': 'badmood',
+        'pastbad-1': 'badmood'
+    }
+    sessionKeyFeelingSwitcher = {
+        'how': -1,
+        'badhow': 1,
+    }
+    sessionKeyFuturestatusSwitcher = {
+        'futgoodnono': -1,
+        'futgoodno-1': -1,
+        'futgoodno0': -1,
+        'futgoodno1': -1,
+        'futgood1': -1,
+        'futgood0': -1,
+        'futgood-1': -1,
+        'futbad1': 1,
+        'futbad0': 1,
+        'futbad-1': -1,
+        'futbadnono': -1,
+        'futbadno1': -1,
+        'futbadno0': -1,
+        'futbadno-1': 1
+    }
+    sessionKeyDonestatusSwitcher = {
+        'pastgoodnono': -1,
+        'pastgoodno1': -1,
+        'pastgoodno0': -1,
+        'pastgoodno-1': -1,
+        'pastbadnono': -1,
+        'pastbadno1': -1,
+        'pastbadno0': -1,
+        'pastbadno-1': 1,
+        'pastbad1': -1,
+        'pastbad0': -1,
+        'pastbad-1': 1
+    }
+    sessionKeyFuture2DoneSwitcher = {
+        'pastgood1': -1,
+        'pastgood0': -1,
+        'pastgood-1': 1
+    }
+    sessionKeyAnswSwitcher = {
+        'how': "Soll ich dich dann lieber in Ruhe lassen?",
+        'badhow': "Freut mich, dass es dir besser geht. Was machst du denn heute so?",
+        'shutdown': "Okay, was verdirbt dir denn dann deinen Tag?",
+        'maybetalkin': "Okay, dann lasse ich dich in Ruhe",
+        'futgoodnono': "Okay, was machst du heute sonst noch?",
+        'futgoodno-1': "Okay, was machst du heute sonst noch?",
+        'futgoodno0': "Das ist schade. Was machst du heute sonst noch?",
+        'futgoodno1': "Okay, was machst du heute sonst noch?",
+        'futgood1': "Schade, dass du dich nicht mehr freust. Was machst du heute sonst noch?",
+        'futgood0': "Okay, was machst du heute sonst noch?",
+        'futgood-1': "Schoen, dass du deine Meinung geaendert hast. Was machst du heute sonst noch?",
+        'futbad1': "Okay, was machst du heute sonst noch?",
+        'futbad0': "Schade, aber was machst du heute sonst noch?",
+        'futbad-1': "Okay, was machst du heute sonst noch?",
+        'futbadnono': "Okay, was machst du heute sonst noch?",
+        'futbadno1': "Okay, was machst du heute sonst noch?",
+        'futbadno0': "Okay, was machst du heute sonst noch?",
+        'futbadno-1': "Okay, was machst du heute sonst noch?",
+        'pastgoodnono': "Okay, was machst du heute sonst noch?",
+        'pastgoodno1': "Okay, was machst du heute sonst noch?",
+        'pastgoodno0': "Okay, was machst du heute sonst noch?",
+        'pastgoodno-1': "Okay, was machst du heute sonst noch?",
+        'pastgood1': "Okay, was machst du heute sonst noch?",
+        'pastgood0': "Okay, was machst du heute sonst noch?",
+        'pastgood-1': "Okay, was machst du heute sonst noch?",
+        'pastbadnono': "Okay, was machst du heute sonst noch?",
+        'pastbadno1': "Okay, was machst du heute sonst noch?",
+        'pastbadno0': "Okay, was machst du heute sonst noch?",
+        'pastbadno-1': "Okay, was machst du heute sonst noch?",
+        'pastbad1': "Okay, was machst du heute sonst noch?",
+        'pastbad0': "Okay, was machst du heute sonst noch?",
+        'pastbad-1': "Okay, was machst du heute sonst noch?"
+    }
 
+    session.attributes['session_key'] = sessionKeyKeySwitcher.get(sessionkey, 'how')
 
-    elif session.attributes['session_key'] == 'futgoodnono':
-        session.attributes['session_key'] == 'neutralmood'
-        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], -1)
-        return question("Okay, was machst du heute sonst noch?")
-    elif session.attributes['session_key'] == 'futgoodno-1':
-        session.attributes['session_key'] == 'neutralmood'
-        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], -1)
-        return question("Okay, was machst du heute sonst noch?")
-    elif session.attributes['session_key'] == 'futgoodno0':
-        session.attributes['session_key'] == 'neutralmood'
-        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], -1)
-        return question("Das ist schade. Was machst du heute sonst noch?")
-    elif session.attributes['session_key'] == 'futgoodno1':
-        session.attributes['session_key'] == 'neutralmood'
-        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], -1)
-        return question("Okay, was machst du heute sonst noch?")
-    elif session.attributes['session_key'] == 'futgood1':
-        session.attributes['session_key'] == 'neutralmood'
-        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], -1)
-        return question("Schade, dass du dich nicht mehr freust. Was machst du heute sonst noch?")
-    elif session.attributes['session_key'] == 'futgood0':
-        session.attributes['session_key'] == 'neutralmood'
-        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], -1)
-        return question("Okay, was machst du heute sonst noch?")
-    elif session.attributes['session_key'] == 'futgood-1':
-        session.attributes['session_key'] == 'neutralmood'
-        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], -1)
-        return question("Schoen, dass du deine Meinung geaendert hast. Was machst du heute sonst noch?")
-    elif session.attributes['session_key'] == 'futbad1':
-        session.attributes['session_key'] == 'badmood'
-        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], 1)
-        return question("Okay, was machst du heute sonst noch?")
-    elif session.attributes['session_key'] == 'futbad0':
-        session.attributes['session_key'] == 'badmood'
-        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], 1)
-        return question("Okay, was machst du heute sonst noch?")
-    elif session.attributes['session_key'] == 'futbad-1':
-        session.attributes['session_key'] == 'badmood'
-        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], -1)
-        return question("Okay, was machst du heute sonst noch?")
-    elif session.attributes['session_key'] == 'futbadnono':
-        session.attributes['session_key'] == 'badmood'
-        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], -1)
-        return question("Okay, was machst du heute sonst noch?")
-    elif session.attributes['session_key'] == 'futbadno1':
-        session.attributes['session_key'] == 'badmood'
-        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], -1)
-        return question("Okay, was machst du heute sonst noch?")
-    elif session.attributes['session_key'] == 'futbadno0':
-        session.attributes['session_key'] == 'badmood'
-        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], -1)
-        return question("Schade, aber was machst du heute sonst noch?")
-    elif session.attributes['session_key'] == 'futbadno-1':
-        session.attributes['session_key'] == 'badmood'
-        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], 1)
-        return question("Okay, was machst du heute sonst noch?")
-    elif session.attributes['session_key'] == 'pastgoodnono':
-        session.attributes['session_key'] == 'goodmood'
-        db.setDoneStatus(session.attributes['userID'], session.attributes['action'], -1)
-        return question("Okay, was machst du heute sonst noch?")
-    elif session.attributes['session_key'] == 'pastgoodno1':
-        session.attributes['session_key'] == 'goodmood'
-        db.setDoneStatus(session.
-attributes['userID'], session.attributes['action'], -1)
-        return question("Okay, was machst du heute sonst noch?")
-    elif session.attributes['session_key'] == 'pastgoodno0':
-        session.attributes['session_key'] == 'goodmood'
-        db.setDoneStatus(session.
-attributes['userID'], session.attributes['action'], -1)
-        return question("Okay, was machst du heute sonst noch?")
-    elif session.attributes['session_key'] == 'pastgoodno-1':
-        session.attributes['session_key'] == 'neutralmood'
-        db.setDoneStatus(session.
-attributes['userID'], session.attributes['action'], -1)
-        return question("Okay, was machst du heute sonst noch?")
-    elif session.attributes['session_key'] == 'pastgood1':
-        session.attributes['session_key'] == 'neutralmood'
-        db.moveFutureActivityToDone(session.
-attributes['userID'], session.attributes['action'], -1)
-        return question("Okay, was machst du heute sonst noch?")
-    elif session.attributes['session_key'] == 'pastgood0':
-        session.attributes['session_key'] == 'neutralmood'
-        db.moveFutureActivityToDone(session.
-attributes['userID'], session.attributes['action'], -1)
-        return question("Okay, was machst du heute sonst noch?")
-    elif session.attributes['session_key'] == 'pastgood-1':
-        session.attributes['session_key'] == 'neutralmood'
-        db.moveFutureActivityToDone(session.
-attributes['userID'], session.attributes['action'], 1)
-        return question("Okay, was machst du heute sonst noch?")
-    elif session.attributes['session_key'] == 'pastbadnono':
-        session.attributes['session_key'] == 'badmood'
-        db.setDoneStatus(session.
-attributes['userID'], session.attributes['action'], -1)
-        return question("Okay, was machst du heute sonst noch?")
-    elif session.attributes['session_key'] == 'pastbadno1':
-        session.attributes['session_key'] == 'badmood'
-        db.setDoneStatus(session.
-attributes['userID'], session.attributes['action'], -1)
-        return question("Okay, was machst du heute sonst noch?")
-    elif session.attributes['session_key'] == 'pastbadno0':
-        session.attributes['session_key'] == 'badmood'
-        db.setDoneStatus(session.
-attributes['userID'], session.attributes['action'], -1)
-        return question("Okay, was machst du heute sonst noch?")
-    elif session.attributes['session_key'] == 'pastbadno-1':
-        session.attributes['session_key'] == 'badmood'
-        db.setDoneStatus(session.
-attributes['userID'], session.attributes['action'], 1)
-        return question("Okay, was machst du heute sonst noch?")
-    elif session.attributes['session_key'] == 'pastbad1':
-        session.attributes['session_key'] == 'badmood'
-        db.setDoneStatus(session.
-attributes['userID'], session.attributes['action'], -1)
-        return question("Okay, was machst du heute sonst noch?")
-    elif session.attributes['session_key'] == 'pastbad0':
-        session.attributes['session_key'] == 'badmood'
-        db.setDoneStatus(session.
-attributes['userID'], session.attributes['action'], -1)
-        return question("Okay, was machst du heute sonst noch?")
-    elif session.attributes['session_key'] == 'pastbad-1':
-        session.attributes['session_key'] == 'badmood'
-        db.setDoneStatus(session.
-attributes['userID'], session.attributes['action'], 1)
-        return question("Okay, was machst du heute sonst noch?")
+    feeling = sessionKeyFeelingSwitcher.get(sessionkey, None)
+    futurestatus = sessionKeyFuturestatusSwitcher.get(sessionkey, None)
+    donestatus = sessionKeyDonestatusSwitcher.get(sessionkey, None)
+    future2done = sessionKeyFuture2DoneSwitcher.get(sessionkey, None)
+    if (feeling != None):
+        db.setUserFeeling(session.attributes['userID'], feeling)
+    if (futurestatus != None):
+        db.setFutureStatus(session.attributes['userID'], session.attributes['action'], futurestatus)
+    if (donestatus != None):
+        db.setDoneStatus(session.attributes['userID'], session.attributes['action'], donestatus)
+    if (future2done != None):
+        db.moveFutureActivityToDone(session.attributes['userID'], session.attributes['action'], future2done)
 
-#Intent bei ich habe...
+    answ = sessionKeyAnswSwitcher.get(sessionkey, "Was machst du heute sonst so?")
+    if (session.attributes['session_key'] == 'maybetalkin'):
+        db.disconnectDatenbank()
+        return statement(answ)
+    else:
+        return question(answ)
+
 @ask.intent('PastActivityIntent', convert={'action': str})
 def action(action):
-    session.attributes['session_key'] == 'fun'
+    print("PastActivityIntent")
     session.attributes['action'] = action
-    #bei guter oder neutraler Laune aehnliche Reaktion, evtl aendern?
-    if session.attributes['session_key'] == 'goodmood' or 'neutralmood':
-        #Kein FutureStatus vorhanden, nachfragen!
-        if db.getFutureStatus(session.attributes['userID'], action) == None:
-            #Kein DoneStatus, keine Informationen vorliegen
-            if db.getDoneStatus(session.attributes['userID'], action) == None:
-                session.attributes['session_key'] = 'pastgoodnono'
-                return question("Hat dir das Spass gemacht?")
-            #DoneStatus positiv -> hat Spass gemacht
-            elif db.getDoneStatus(session.attributes['userID'], action) == 1:
-                session.attributes['session_key'] = 'pastgoodno1'
-                return question("Du hattest Spass, richtig?")
-            #Done Status neutral
-            elif db.getDoneStatus(session.attributes['userID'], action) == 0:         
-                session.attributes['session_key'] = 'pastgoodno0'      
-                return question("Hattest du heute Spass?")
-            #DoneStatus negativ -> hat keinen Spass gemacht
-            else:
-                session.attributes['session_key'] = 'pastgoodno-1'
-                return question("Du hattest keinen Spass, oder?")
-        #FutureStatus positiv -> Freude auf Aktivitaet
-        elif db.getFutureStatus(session.attributes['userID'], action) == 1:
-            session.attributes['session_key'] = 'pastgood1'
-            return question("Du hast dich darauf gefreut, war es denn gut?")
-        #FutureStatus neutral
-        elif db.getFutureStatus(session.attributes['userID'], action) == 0:
-            session.attributes['session_key'] = 'pastgood0'
-            return question("War es nur so la la?")
-        #FutureStatus negativ -> Keine Freude auf Aktivitaet
-        else:
-            session.attributes['session_key'] = 'pastgood-1'
-            return question("Du hast dich nicht darauf gefreut, war es denn so schlecht?")
-    #Schlechte Laune aus vorherigem Gespraech
-    elif session.attributes['session_key'] == 'badmood':
-        #Kein FutureStatus vorhanden, nachfragen!
-        if db.getFutureStatus(session.attributes['userID'], action) == None:
-            #Kein DoneStatus, keine Informationen vorliegen
-            if db.getDoneStatus(session.attributes['userID'], action) == None:
-                session.attributes['session_key'] = 'pastbadnono'
-                return question("Das hat dir also keinen Spass gemacht?")
-            #DoneStatus positiv -> hat Spass gemacht
-            elif db.getDoneStatus(session.attributes['userID'], action) == 1:
-                session.attributes['session_key'] = 'pastbadno1'
-                return question("Du hast vorher gesagt du hattest Spass, stimmt das nicht mehr?")
-            #Done Status neutral
-            elif db.getDoneStatus(session.attributes['userID'], action) == 0:           
-                session.attributes['session_key'] = 'pastbadno0'    
-                return question("Hattest du heute dann keinen Spass?")
-            #DoneStatus negativ -> hat keinen Spass gemacht
-            else:
-                session.attributes['session_key'] = 'pastbadno-1'
-                return question("Also hat das dir den Tag verdorben?")
-        #FutureStatus positiv -> Freude auf Aktivitaet
-        elif db.getFutureStatus(session.attributes['userID'], action) == 1:
-            session.attributes['session_key'] = 'pastbad1'
-            return question("Du hast dich darauf gefreut, war es denn dann doch nicht gut?")
-        #FutureStatus neutral
-        elif db.getFutureStatus(session.attributes['userID'], action) == 0:
-            session.attributes['session_key'] = 'pastbad0'
-            return question("War es so la la?")
-        #FutureStatus negativ -> Keine Freude auf Aktivitaet
-        else:
-            session.attributes['session_key'] = 'pastbad-1'
-            return question("Du hast dich nicht darauf gefreut, also war es so schlecht?")
 
-#Intent bei ich werde..., ich muss...
+    if session.attributes['session_key'] == 'badmood':
+        futurestatus = db.getFutureStatus(session.attributes['userID'], action)
+        if (futurestatus != None):
+            futurestatusKeySwitcher = {
+                1: 'pastbad1',
+                0: 'pastbad0',
+                -1: 'pastbad-1'
+            }
+            futurestatusAnswSwitcher = {
+                1: "Du hast dich eigentlich darauf gefreut, war es schlecht?",
+                0: "War es so la la?",
+                -1: "Du hast dich nicht darauf gefreut, also war es schlecht?"
+            }
+
+            session.attributes['session_key'] = futurestatusKeySwitcher.get(futurestatus, 'pastbadnono')
+            answ = futurestatusAnswSwitcher.get(futurestatus, "Das hat dir also keinen Spass gemacht?")
+        else:
+            donestatus = db.getDoneStatus(session.attributes['userID'], action)
+            donestatusKeySwitcher = {
+                1: 'pastbadno1',
+                0: 'pastbadno0',
+                -1: 'pastbadno-1'
+            }
+            donestatusAnswSwitcher = {
+                1: "Normalerweise macht dir das aber Spass, heute nicht?",
+                0: "Hattest du heute keinen Spass?",
+                -1: "Also hat das dir den Tag verdorben?"
+            }
+
+            session.attributes['session_key'] = donestatusKeySwitcher.get(donestatus, 'pastbadnono')
+            answ = donestatusAnswSwitcher.get(donestatus, "Das hat dir also keinen Spass gemacht?")
+        return question(answ)
+    else:
+        futurestatus = db.getFutureStatus(session.attributes['userID'], action)
+        if (futurestatus != None):
+            futurestatusKeySwitcher = {
+                1: 'pastgood1',
+                0: 'pastgood0',
+                -1: 'pastgood-1'
+            }
+            futurestatusAnswSwitcher = {
+                1: "Du hast dich darauf gefreut, war es denn gut?",
+                0: "War es nur so la la?",
+                -1: "Du hast dich nicht darauf gefreut, war es denn so schlecht?"
+            }
+
+            session.attributes['session_key'] = futurestatusKeySwitcher.get(futurestatus, 'pastgoodnono')
+            answ = futurestatusAnswSwitcher.get(futurestatus, "Hat dir das Spaß gemacht?")
+        else:
+            donestatus = db.getDoneStatus(session.attributes['userID'], action)
+            donestatusKeySwitcher = {
+                1: 'pastgoodno1',
+                0: 'pastgoodno0',
+                -1: 'pastgoodno-1'
+            }
+            donestatusAnswSwitcher = {
+                1: "Du hattest Spass, richtig?",
+                0: "Hattest du heute Spass?",
+                -1: "Du hattest keinen Spass, oder?"
+            }
+
+            session.attributes['session_key'] = donestatusKeySwitcher.get(donestatus, 'pastgoodnono')
+            answ = donestatusAnswSwitcher.get(donestatus, "Hat dir das Spaß gemacht?")
+        return question(answ)
+
+#TODO
 @ask.intent('FutureActivityIntent', convert={'action': str})
 def action(action):
-    #Wenn aus vorherigem Gespraech gute Laune bestand
+    print("FutureActivityIntent")
     session.attributes['action'] = action
-    if session.attributes['session_key'] == 'goodmood':
-        if db.getFutureStatus(session.attributes['userID'], action) == 1:
-            session.attributes['session_key'] = 'futgood1'
-            return question("Du freust dich darauf, oder?")
-        elif db.getFutureStatus(session.attributes['userID'], action) == 0:
-            session.attributes['session_key'] = 'futgood0'
-            return question("Freust du dich jetzt?")
-        elif db.getFutureStatus(session.attributes['userID'], action) == -1:
-            session.attributes['session_key'] = 'futgood-1'
-            return question("Du freust dich nicht darauf, oder?")
+
+    if session.attributes['session_key'] == 'badmood':
+        futurestatus = db.getFutureStatus(session.attributes['userID'], action)
+        if (futurestatus != None):
+            futurestatusKeySwitcher = {
+                1: 'futbad1',
+                0: 'futbad0',
+                -1: 'futbad-1'
+            }
+            futurestatusAnswSwitcher = {
+                1: "Freust du dich nicht mehr?",
+                0: "Hast du jetzt keine Lust mehr darauf?",
+                -1: "Du freust dich sicher nicht darauf, oder?"
+            }
+
+            session.attributes['session_key'] = futurestatusKeySwitcher.get(futurestatus, 'badmood')
+            answ = futurestatusAnswSwitcher.get(futurestatus, "Das ist schade. Was machst du sonst so?")
         else:
-            if db.getDoneStatus(session.attributes['userID'], action) == 1:
-                session.attributes['session_key'] = 'futgoodno1'
-                return question("Normalerweise freust du dich darauf, heute auch?")
-            elif db.getDoneStatus(session.attributes['userID'], action) == 0:
-                session.attributes['session_key'] = 'futgoodno0'
-                return question("Wie stehst du heute dazu?")
-            elif db.getDoneStatus(session.attributes['userID'], action) == -1:
-                session.attributes['session_key'] = 'futgoodno-1'
-                return question("Du freust dich normal nicht darauf, freust du dich heute?")
-            else:
-                session.attributes['session_key'] = 'futgoodnono'
-                return question("Freust du dich?")
-    #Wenn aus vorherigem Gespraech schlechte Laune bestand
-    elif session.attributes['session_key'] == 'badmood':
-        if db.getFutureStatus(session.attributes['userID'], action) == 1:
-            session.attributes['session_key'] = 'futbad1'
-            return question("Freust du dich nicht mehr?")
-        elif db.getFutureStatus(session.attributes['userID'], action) == 0:
-            session.attributes['session_key'] = 'futbad0'
-            return question("Hast du jetzt gar keine Lust mehr?")
-        elif db.getFutureStatus(session.attributes['userID'], action) == -1:
-            session.attributes['session_key'] = 'futbad-1'
-            return question("Du freust dich sicher nicht darauf, oder?")
+            donestatus = db.getDoneStatus(session.attributes['userID'], action)
+            donestatusKeySwitcher = {
+                1: 'futbadno1',
+                0: 'futbadno0',
+                -1: 'futbadno-1'
+            }
+            donestatusAnswSwitcher = {
+                1: "Normalerweise freust du dich darauf, heute auch?",
+                0: "Freust du dich heute?",
+                -1: "Du freust dich normal nicht darauf, heute bestimmt auch nicht?"
+            }
+
+            session.attributes['session_key'] = donestatusKeySwitcher.get(donestatus, 'badmood')
+            answ = donestatusAnswSwitcher.get(donestatus, "Das ist schade. Was machst du sonst so?")
+        return question(answ)
+    else:
+        futurestatus = db.getFutureStatus(session.attributes['userID'], action)
+        if (futurestatus != None):
+            futurestatusKeySwitcher = {
+                1: 'futgood1',
+                0: 'futgood0',
+                -1: 'futgood-1'
+            }
+            futurestatusAnswSwitcher = {
+                1: "Du freust dich darauf, oder?",
+                0: "Freust du dich jetzt?",
+                -1: "Du freust dich nicht darauf, oder?"
+            }
+
+            session.attributes['session_key'] = futurestatusKeySwitcher.get(futurestatus, 'futgoodnono')
+            answ = futurestatusAnswSwitcher.get(futurestatus, "Freust du dich?")
         else:
-            if db.getDoneStatus(session.attributes['userID'], action) == 1:
-                session.attributes['session_key'] = 'futbadno1'
-                return question("Normalerweise freust du dich darauf, heute auch?")
-            elif db.getDoneStatus(session.attributes['userID'], action) == 0:
-                session.attributes['session_key'] = 'futbadno0'
-                return question("Freust du dich heute?")
-            elif db.getDoneStatus(session.attributes['userID'], action) == -1:
-                session.attributes['session_key'] = 'futbadno-1'
-                return question("Du freust dich normal nicht darauf, heute bestimmt auch nicht?")
-#FEHLER, aber warum??
-            else:
-                session.attributes['session_key'] = 'badmood'
-                return question("Das ist schade. Was machst du sonst so?")
+            donestatus = db.getDoneStatus(session.attributes['userID'], action)
+            donestatusKeySwitcher = {
+                1: 'futgoodno1',
+                0: 'futgoodno0',
+                -1: 'futgoodno-1'
+            }
+            donestatusAnswSwitcher = {
+                1: "Normalerweise freust du dich darauf, heute auch?",
+                0: "Freust du dich heute darauf?",
+                -1: "Du freust dich normal nicht darauf, freust du dich heute?"
+            }
+
+            session.attributes['session_key'] = donestatusKeySwitcher.get(donestatus, 'futgoodnono')
+            answ = donestatusAnswSwitcher.get(donestatus, "Freust du dich?")
+        return question(answ)
 
 #Vorschlaege fuer weitere Aktivitaeten
 @ask.intent('SuggestionIntent')
-def suggestion():   
+def suggestion():
+    print("SuggestionIntent")
     global counter 
     act = db.getActivity(session.attributes['userID'], counter)
     if act != None:
@@ -621,6 +611,7 @@ def suggestion():
 #geplante Aktivitaeten sagen
 @ask.intent('TellFutureIntent')
 def tell():
+    print("TellFutureIntent")
     activities = db.getFutureActivities(session.attributes['userID'])
     if activities == None:
         return question("Du hast heute noch nichts geplant")

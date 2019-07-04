@@ -21,7 +21,8 @@
                         "Schluss",
                         "aufhören",
                         "Stopp",
-                        "Ende"
+                        "Ende",
+						"Tschüss"
                     ]
                 },
                 {
@@ -74,6 +75,7 @@
                     ],
                     "samples": [
                         "richtig",
+						"stimmt",
                         "Doch",
                         "Ich fühle mich {gut}",
                         "Mir geht es {gut}",

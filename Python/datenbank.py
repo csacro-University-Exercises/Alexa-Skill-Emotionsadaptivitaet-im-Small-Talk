@@ -17,7 +17,7 @@ class Datenbank:
         :raise: mysql.connector.errors.Error
         """
         try:
-            Datenbank.__mydb = self.__connectDatenbank()
+            Datenbank.__mydb = None
         except mysql.connector.errors.Error as e:
             raise
 
@@ -127,7 +127,7 @@ class Datenbank:
             raise
 
     #Verbindung auf- und abbauen
-    def __connectDatenbank(self):
+    def connectDatenbank(self):
         """
         Verbindung aufbauen
         :return: mysql.connector
@@ -144,6 +144,7 @@ class Datenbank:
             except mysql.connector.errors.Error as e:
                 datenbank.rollback()
                 raise
+            self.__mydb = datenbank
             return datenbank
         except mysql.connector.errors.Error as e:
             raise
