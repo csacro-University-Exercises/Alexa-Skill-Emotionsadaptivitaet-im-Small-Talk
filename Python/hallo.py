@@ -502,7 +502,7 @@ def action(action):
             }
 
             session.attributes['session_key'] = futurestatusKeySwitcher.get(futurestatus, 'pastgoodnono')
-            answ = futurestatusAnswSwitcher.get(futurestatus, "Hat dir das Spaß gemacht?")
+            answ = futurestatusAnswSwitcher.get(futurestatus, "Hat dir das Spass gemacht?")
         else:
             donestatus = db.getDoneStatus(session.attributes['userID'], action)
             donestatusKeySwitcher = {
@@ -517,10 +517,9 @@ def action(action):
             }
 
             session.attributes['session_key'] = donestatusKeySwitcher.get(donestatus, 'pastgoodnono')
-            answ = donestatusAnswSwitcher.get(donestatus, "Hat dir das Spaß gemacht?")
+            answ = donestatusAnswSwitcher.get(donestatus, "Hat dir das Spass gemacht?")
         return question(answ)
 
-#TODO
 @ask.intent('FutureActivityIntent', convert={'action': str})
 def action(action):
     print("FutureActivityIntent")
