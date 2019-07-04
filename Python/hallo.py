@@ -195,6 +195,7 @@ def actionsGood():
     answ = sessionKeyAnswSwitcher.get(sessionkey, "Was machst du heute sonst so?")
     if(session.attributes['session_key'] == 'shutdown'):
         db.disconnectDatenbank()
+        print("db disconnected")
         return statement(answ)
     else:
         return question(answ)
@@ -449,6 +450,7 @@ def actionsBad():
     answ = sessionKeyAnswSwitcher.get(sessionkey, "Was machst du heute sonst so?")
     if (session.attributes['session_key'] == 'maybetalkin'):
         db.disconnectDatenbank()
+        print("db disconnected")
         return statement(answ)
     else:
         return question(answ)
@@ -606,8 +608,12 @@ def suggestion():
             session.attributes['session_key'] = 'furthersuggestion'
             return question("Wie waere es mit {} . Soll ich dir eine weitere Aktivitaet vorschlagen, dann sag bitte Vorschlag oder Ende zum Beenden".format(act))
         else:
+            db.disconnectDatenbank()
+            print("db disconnected")
             return statement("Du koenntest {}".format(act))
     else:
+        db.disconnectDatenbank()
+        print("db disconnected")
         return statement("Leider kann ich dir noch keine Aktivitaet vorschlagen")
 
 #geplante Aktivitaeten sagen
