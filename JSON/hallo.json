@@ -17,11 +17,53 @@
                 },
                 {
                     "name": "AMAZON.StopIntent",
-                    "samples": []
+                    "samples": [
+                        "Schluss",
+                        "aufhören",
+                        "Stopp",
+                        "Ende",
+						"Tschüss"
+                    ]
                 },
                 {
                     "name": "AMAZON.NavigateHomeIntent",
                     "samples": []
+                },
+                {
+                    "name": "UserIntent",
+                    "slots": [
+                        {
+                            "name": "name",
+                            "type": "AMAZON.DE_FIRST_NAME"
+                        }
+                    ],
+                    "samples": [
+                        "Ich heiße {name}",
+                        "Ich bin {name}",
+                        "{name}"
+                    ]
+                },
+                {
+                    "name": "SuggestionIntent",
+                    "slots": [],
+                    "samples": [
+                        "nichts",
+                        "Gibt es noch etwas dass ich gerne mache",
+                        "Hast du noch Ideen",
+                        "Kannst du mir etwas vorschlagen",
+                        "Vorschläge",
+                        "Vorschlag"
+                    ]
+                },
+                {
+                    "name": "TellFutureIntent",
+                    "slots": [],
+                    "samples": [
+                        "Kannst du mir sagen was ich machen wollte",
+                        "Was wollte ich noch machen",
+                        "Was",
+                        "Was habe ich heute noch geplant"
+                    ]
                 },
                 {
                     "name": "YesIntent",
@@ -32,6 +74,9 @@
                         }
                     ],
                     "samples": [
+                        "richtig",
+						"stimmt",
+                        "Doch",
                         "Ich fühle mich {gut}",
                         "Mir geht es {gut}",
                         "sicher",
@@ -64,6 +109,8 @@
                         }
                     ],
                     "samples": [
+                        "falsch",
+                        "nein",
                         "Ich habe Schmerzen",
                         "Ich fühle mich {schlecht}",
                         "Mir geht es {schlecht}",
@@ -83,10 +130,10 @@
                         "Ich habe {action}",
                         "Ich habe heute {action}",
                         "Ich war heute {action}",
-						"Heute war ich {action}"
+                        "Heute war ich {action}",
                         "Ich habe mich {action}",
-                        "Ich bin {action}"
-						"Heute bin ich {action}"
+                        "Ich bin {action}",
+                        "Heute bin ich {action}"
                     ]
                 },
                 {
@@ -103,8 +150,8 @@
                         "Heute werde ich noch {action}",
                         "Ich habe vor noch zu {action}",
                         "Ich werde {action}",
-						"Ich werde heute {action}",
-						"Heute werde ich {action}"
+                        "Ich werde heute {action}",
+                        "Heute werde ich {action}"
                     ]
                 }
             ],
@@ -242,13 +289,13 @@
                                 "value": "sport machen",
                                 "synonyms": [
                                     "sport gemacht",
-									"trainieren",
-									"trainieren gehen",
-									"trainiert",
-									"trainieren gegangen",
-									"im Fitnessstudio",
-									"ins Fitnessstudio gegangen",
-									"ins Fitnessstudio gehen",									
+                                    "trainieren",
+                                    "trainieren gehen",
+                                    "trainiert",
+                                    "trainieren gegangen",
+                                    "im Fitnessstudio",
+                                    "ins Fitnessstudio gegangen",
+                                    "ins Fitnessstudio gehen"
                                 ]
                             }
                         },
@@ -268,53 +315,54 @@
                                 ]
                             }
                         },
-						{
+                        {
                             "name": {
                                 "value": "zur Uni gehen",
                                 "synonyms": [
+                                    "an der Uni",
                                     "in der Uni",
-									"in die Uni gegangen",
-									"in die Uni gehen"
+                                    "in die Uni gegangen",
+                                    "in die Uni gehen"
                                 ]
                             }
                         },
-						{
+                        {
                             "name": {
                                 "value": "ins Kosmetikstudio gehen",
                                 "synonyms": [
-                                    "ins Kosmetikstudio gegangen",
+                                    "ins Kosmetikstudio gegangen"
                                 ]
                             }
                         },
-						{
+                        {
                             "name": {
                                 "value": "in die Kirche gehen",
                                 "synonyms": [
                                     "in der Kirche",
-									"in die Kirche gegangen",
-									"zur Kirche gehen"
+                                    "in die Kirche gegangen",
+                                    "zur Kirche gehen"
                                 ]
                             }
                         },
-						{
+                        {
                             "name": {
                                 "value": "zum Blutspenden gehen",
                                 "synonyms": [
                                     "Blutspenden",
-									"Blutspenden gehen",
-									"Blut gespenden",
-									"Blutspenden gegangen"
+                                    "Blutspenden gehen",
+                                    "Blut gespenden",
+                                    "Blutspenden gegangen"
                                 ]
                             }
                         },
-						{
+                        {
                             "name": {
                                 "value": "in die Sauna gehen",
                                 "synonyms": [
                                     "in die Sauna gegangen",
-									"in der Sauna",
-									"mich saunieren",
-									"saunieren"
+                                    "in der Sauna",
+                                    "mich saunieren",
+                                    "saunieren"
                                 ]
                             }
                         },
@@ -322,7 +370,7 @@
                             "name": {
                                 "value": "dich sonnen",
                                 "synonyms": [
-									"mich sonnen"
+                                    "mich sonnen",
                                     "mich gesonnt"
                                 ]
                             }
@@ -331,7 +379,7 @@
                             "name": {
                                 "value": "dir einen entspannten Tag machen",
                                 "synonyms": [
-									"chillen"
+                                    "chillen",
                                     "entspannen",
                                     "gechilled",
                                     "entspannt"
@@ -342,6 +390,7 @@
                             "name": {
                                 "value": "einen Film anschauen",
                                 "synonyms": [
+                                    "einen Film schauen",
                                     "einen Film sehen",
                                     "einen Film angeschaut",
                                     "einen Film angesehen"
@@ -352,6 +401,7 @@
                             "name": {
                                 "value": "eine Serie anschauen",
                                 "synonyms": [
+                                    "eine Serie schauen",
                                     "einen Serie sehen",
                                     "einen Serie angeschaut",
                                     "einen Serie angesehen"
@@ -362,6 +412,7 @@
                             "name": {
                                 "value": "fernsehen",
                                 "synonyms": [
+                                    "fernseh schauen",
                                     "fernsehen",
                                     "fernseh geschaut"
                                 ]
@@ -373,67 +424,67 @@
                                 "synonyms": [
                                     "ins Kino gegangen",
                                     "einen Film im Kino gesehen",
-									"einen Film im Kino sehen",
+                                    "einen Film im Kino sehen",
                                     "einen Film im Kino anschauen",
-									"einen Film im Kino angeschaut"
+                                    "einen Film im Kino angeschaut"
                                 ]
                             }
                         },
-						{
+                        {
                             "name": {
                                 "value": "ins Theater gehen",
                                 "synonyms": [
                                     "ins Theater gegangen",
                                     "ein Theaterstück gesehen",
-									"ein Theaterstück sehen",
+                                    "ein Theaterstück sehen",
                                     "ein Theaterstück anschauen",
-									"ein Theaterstück angeschaut"
+                                    "ein Theaterstück angeschaut"
                                 ]
                             }
                         },
-						{
+                        {
                             "name": {
                                 "value": "in den Freizeitpark gehen",
                                 "synonyms": [
                                     "in den Freizeitpark gegangen",
                                     "im Freizeitpark",
-									"einen Freizeitpark besuchen",
-									"in einen Freizeitpark gehen"
+                                    "einen Freizeitpark besuchen",
+                                    "in einen Freizeitpark gehen"
                                 ]
                             }
                         },
-						{
+                        {
                             "name": {
                                 "value": "eine Ausstellung besuchen",
                                 "synonyms": [
                                     "ins Museum gegangen",
-									"ins Museum gehen"
-									"eine Ausstellung besucht",
-									"in eine Gallerie gehen",
-									"in eine Gallerie gegangen"
+                                    "ins Museum gehen",
+                                    "eine Ausstellung besucht",
+                                    "in eine Gallerie gehen",
+                                    "in eine Gallerie gegangen"
                                 ]
                             }
                         },
-						{
+                        {
                             "name": {
                                 "value": "ins Stadion gehen",
                                 "synonyms": [
                                     "ins Statdion gegangen",
-									"im Stadion",
-									"ein Spiel im Stadion sehen",
-									"ein Spiel im Stadion gesehen"
+                                    "im Stadion",
+                                    "ein Spiel im Stadion sehen",
+                                    "ein Spiel im Stadion gesehen"
                                 ]
                             }
                         },
-						{
+                        {
                             "name": {
                                 "value": "Behördengänge machen",
                                 "synonyms": [
                                     "habe Behördengänge gemacht",
-									"ins Rathaus gehen",
-									"ins Rathaus gegangen",
-									"etwas beantragen",
-									"etwas beantragt"
+                                    "ins Rathaus gehen",
+                                    "ins Rathaus gegangen",
+                                    "etwas beantragen",
+                                    "etwas beantragt"
                                 ]
                             }
                         },
@@ -457,18 +508,18 @@
                             "name": {
                                 "value": "einkaufen gehen",
                                 "synonyms": [
-									"einkaufen",
+                                    "einkaufen",
                                     "eingekauft",
-									"einkaufen gegangen"
+                                    "einkaufen gegangen"
                                 ]
                             }
                         },
-						{
+                        {
                             "name": {
                                 "value": "spatzieren gehen",
                                 "synonyms": [
-									"spatzieren",
-									"spatzieren gegangen"
+                                    "spatzieren",
+                                    "spatzieren gegangen"
                                 ]
                             }
                         },
@@ -476,10 +527,10 @@
                             "name": {
                                 "value": "angeln gehen",
                                 "synonyms": [
-									"fischen",
+                                    "fischen",
                                     "gefischt",
-									"geangelt"
-									"angeln gegangen"
+                                    "geangelt",
+                                    "angeln gegangen"
                                 ]
                             }
                         },
@@ -491,7 +542,7 @@
                                 ]
                             }
                         },
-						{
+                        {
                             "name": {
                                 "value": "Musik hören",
                                 "synonyms": [
@@ -499,26 +550,26 @@
                                 ]
                             }
                         },
-						{
+                        {
                             "name": {
                                 "value": "auf ein Konzert gehen",
                                 "synonyms": [
-									"ein Konzert besuchen"
-									"auf ein Konzert gegangen"
-									"Konzert"
-									"auf einem Konzert"
+                                    "ein Konzert besuchen",
+                                    "auf ein Konzert gegangen",
+                                    "Konzert",
+                                    "auf einem Konzert"
                                 ]
                             }
                         },
-						{
+                        {
                             "name": {
                                 "value": "musizieren",
                                 "synonyms": [
                                     "mein Instrument spielen",
-									"mein Instrument gespielt",
+                                    "mein Instrument gespielt",
                                     "ein Instrument spielen",
-									"ein Instrument gespielt",
-									"musiziert"
+                                    "ein Instrument gespielt",
+                                    "musiziert"
                                 ]
                             }
                         },
@@ -534,9 +585,9 @@
                             "name": {
                                 "value": "etwas fotografieren",
                                 "synonyms": [
-									"fotografieren",
+                                    "fotografieren",
                                     "fotografiert",
-									"etwas fotografiert"
+                                    "etwas fotografiert"
                                 ]
                             }
                         },
@@ -547,10 +598,10 @@
                                     "geputzt",
                                     "sauber machen",
                                     "sauber gemacht",
-									"aufräumen",
-									"aufgeräumt",
-									"Ordnung schaffen",
-									"Ordnung geschaffen"
+                                    "aufräumen",
+                                    "aufgeräumt",
+                                    "Ordnung schaffen",
+                                    "Ordnung geschaffen"
                                 ]
                             }
                         },
@@ -558,7 +609,7 @@
                             "name": {
                                 "value": "einfachen lachend durch den Tag gehen",
                                 "synonyms": [
-									"lachen"
+                                    "lachen",
                                     "gelacht"
                                 ]
                             }
@@ -567,8 +618,8 @@
                             "name": {
                                 "value": "einen Cafe trinken",
                                 "synonyms": [
-									"Cafe trinken"
-									"einen Cafe getrunken"
+                                    "Cafe trinken",
+                                    "einen Cafe getrunken",
                                     "Cafe getrunken"
                                 ]
                             }
@@ -577,36 +628,36 @@
                             "name": {
                                 "value": "dich mit deinen Freunden treffen",
                                 "synonyms": [
-									"mich mit Freunden treffen",
+                                    "mich mit Freunden treffen",
                                     "mich mit Freunden getroffen",
                                     "mich mit Freunden verabreden",
                                     "mich mit Freunden verabredet"
                                 ]
                             }
                         },
-						{
+                        {
                             "name": {
                                 "value": "etwas mit deiner Familie unternehmen",
                                 "synonyms": [
                                     "etwas mit meiner Familie unternommmen",
-									"etwas mit meiner Familie gemacht",
-									"mit meiner Familie gespielt",
-									"meiner Familie geholfen",
+                                    "etwas mit meiner Familie gemacht",
+                                    "mit meiner Familie gespielt",
+                                    "meiner Familie geholfen",
                                     "etwas mit meiner Familie unternehmen",
-									"etwas mit meiner Familie machen",
-									"mit meiner Familie spielen",
-									"meiner Familie helfen"
+                                    "etwas mit meiner Familie machen",
+                                    "mit meiner Familie spielen",
+                                    "meiner Familie helfen"
                                 ]
                             }
                         },
-						{
+                        {
                             "name": {
                                 "value": "zum Arzt gehen",
                                 "synonyms": [
                                     "Arzt",
-									"Arzt gewesen",
-									"einen Arzttermin",
-									"zu einem Arzttermin gehen"
+                                    "Arzt gewesen",
+                                    "einen Arzttermin",
+                                    "zu einem Arzttermin gehen"
                                 ]
                             }
                         },
@@ -620,7 +671,7 @@
                                 ]
                             }
                         },
-						{
+                        {
                             "name": {
                                 "value": "im Internet surfen",
                                 "synonyms": [
@@ -637,8 +688,8 @@
                                     "spielen",
                                     "gespielt",
                                     "ein Spiel gespielt",
-									"Spiele spielen",
-									"Spiele gespielt"
+                                    "Spiele spielen",
+                                    "Spiele gespielt"
                                 ]
                             }
                         },
@@ -646,17 +697,17 @@
                             "name": {
                                 "value": "feiern gehen",
                                 "synonyms": [
-									"auf einer Party",
-									"feiern"
+                                    "auf einer Party",
+                                    "feiern",
                                     "auf eine Party gehen",
                                     "auf eine Party gegangen",
-									"Party gemacht",
-									"Party machen",
+                                    "Party gemacht",
+                                    "Party machen",
                                     "gefeiert",
                                     "saufen",
                                     "gesoffen",
-									"trinken",
-									"getrunken"
+                                    "trinken",
+                                    "getrunken"
                                 ]
                             }
                         },
@@ -664,14 +715,14 @@
                             "name": {
                                 "value": "essen gehen",
                                 "synonyms": [
-									"essen",
-									"essen gegangen",
+                                    "essen",
+                                    "essen gegangen",
                                     "gegessen",
-									"in einem Restaurant",
-									"in ein Restaurant gehen",
-									"in ein Restaurant gegangen",
-									"in einem Restaurant gegessen",
-									"in einem Restaurant essen"
+                                    "in einem Restaurant",
+                                    "in ein Restaurant gehen",
+                                    "in ein Restaurant gegangen",
+                                    "in einem Restaurant gegessen",
+                                    "in einem Restaurant essen"
                                 ]
                             }
                         },
@@ -680,44 +731,44 @@
                                 "value": "zur Eisdiele gehen",
                                 "synonyms": [
                                     "Eis essen",
-									"Eis gegessen",
-									"in die Eisdiele gegangen",
-									"in die Eisdiele gehen",
-									"Eis essen gehen",
-									"Eis essen gegangen"
+                                    "Eis gegessen",
+                                    "in die Eisdiele gegangen",
+                                    "in die Eisdiele gehen",
+                                    "Eis essen gehen",
+                                    "Eis essen gegangen"
                                 ]
                             }
                         },
-						{
+                        {
                             "name": {
                                 "value": "in den Zoo gehen",
                                 "synonyms": [
                                     "in den Zoo gegangen",
-									"den Zoo besuchen"
+                                    "den Zoo besuchen"
                                 ]
                             }
                         },
-						{
+                        {
                             "name": {
                                 "value": "eine Show ansehen",
                                 "synonyms": [
                                     "eine Show angesehen",
-									"in einer Show",
-									"in eine Show gehen",
-									"in eine Show gegangen",
-									"im Zirkus",
-									"in den Zirkus gehen",
-									"in den Zirkus gegangen"
+                                    "in einer Show",
+                                    "in eine Show gehen",
+                                    "in eine Show gegangen",
+                                    "im Zirkus",
+                                    "in den Zirkus gehen",
+                                    "in den Zirkus gegangen"
                                 ]
                             }
                         },
-						{
+                        {
                             "name": {
                                 "value": "an den See gehen",
                                 "synonyms": [
-									"am See"
-									"zum See gegangen"
-									"am See gewesen"
+                                    "am See",
+                                    "zum See gegangen",
+                                    "am See gewesen"
                                 ]
                             }
                         },
@@ -736,9 +787,9 @@
                                     "gemalt",
                                     "gezeichnet",
                                     "zeichnen",
-									"malen",
-									"basteln",
-									"gebastelt"
+                                    "malen",
+                                    "basteln",
+                                    "gebastelt"
                                 ]
                             }
                         },
@@ -747,32 +798,32 @@
                                 "value": "etwas lesen",
                                 "synonyms": [
                                     "lesen",
-									"etwas gelesen",
-									"gelesen",
-									"ein Buch gelesen",
-									"ein Buch lesen"
+                                    "etwas gelesen",
+                                    "gelesen",
+                                    "ein Buch gelesen",
+                                    "ein Buch lesen"
                                 ]
                             }
                         },
-						{
+                        {
                             "name": {
                                 "value": "auf eine Veranstaltung gehen",
                                 "synonyms": [
                                     "auf einer Veranstaltung",
-									"auf eine Veranstaltung gegangen",
-									"auf einer Veranstaltung geholfen",
-									"auf einer Veranstaltung helfen"
+                                    "auf eine Veranstaltung gegangen",
+                                    "auf einer Veranstaltung geholfen",
+                                    "auf einer Veranstaltung helfen"
                                 ]
                             }
                         },
-						{
+                        {
                             "name": {
                                 "value": "dich streiten",
                                 "synonyms": [
                                     "mich gestritten",
-									"ich werde mich streiten",
-									"auf einer Veranstaltung geholfen",
-									"auf einer Veranstaltung helfen"
+                                    "ich werde mich streiten",
+                                    "auf einer Veranstaltung geholfen",
+                                    "auf einer Veranstaltung helfen"
                                 ]
                             }
                         },
@@ -781,26 +832,26 @@
                                 "value": "Urlaub machen",
                                 "synonyms": [
                                     "Urlaub gemacht",
-									"in den Urlaub fahren",
-									"in den Urlaub fliegen",
-									"in den Urlaub gefahren",
-									"in den Urlaub geflogen",
-									"mir freigenommen",
-									"mir freinehmen",
-									"verreisen",
-									"verreist"
+                                    "in den Urlaub fahren",
+                                    "in den Urlaub fliegen",
+                                    "in den Urlaub gefahren",
+                                    "in den Urlaub geflogen",
+                                    "mir freigenommen",
+                                    "mir freinehmen",
+                                    "verreisen",
+                                    "verreist"
                                 ]
                             }
                         },
-						{
+                        {
                             "name": {
                                 "value": "dich sozial engagieren",
                                 "synonyms": [
-									"sozial engangiert",
-									"sozial engagieren",
+                                    "sozial engangiert",
+                                    "sozial engagieren",
                                     "Menschen geholfen",
-									"Menschen helfen",
-									"Menschen helfen gehen"
+                                    "Menschen helfen",
+                                    "Menschen helfen gehen"
                                 ]
                             }
                         },
@@ -809,35 +860,16 @@
                                 "value": "schoppen",
                                 "synonyms": [
                                     "geschopped",
-									"Kleidung einkaufen",
-									"Klamotten einkaufen",
-									"Kleidung eingekauft",
-									"Klamotten eingekauft"
+                                    "Kleidung einkaufen",
+                                    "Klamotten einkaufen",
+                                    "Kleidung eingekauft",
+                                    "Klamotten eingekauft"
                                 ]
                             }
                         }
                     ]
                 }
             ]
-        },
-        "dialog": {
-            "intents": [
-                {
-                    "name": "PastActivityIntent",
-                    "confirmationRequired": true,
-                    "prompts": {},
-                    "slots": [
-                        {
-                            "name": "action",
-                            "type": "activities",
-                            "confirmationRequired": false,
-                            "elicitationRequired": false,
-                            "prompts": {}
-                        }
-                    ]
-                }
-            ],
-            "delegationStrategy": "ALWAYS"
         }
     }
 }
