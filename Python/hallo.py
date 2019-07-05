@@ -37,24 +37,24 @@ def createuser(name):
         db.createUser(name)
         session.attributes['userID'] = db.getUser(name)
         session.attributes['session_key'] = 'how'
-        return question("Hallo {}, wie geht es dir heute?".format(name))
+        return question("Hallo {}, wie geht es dir heute?".format(str(name)))
     #User vorhanden    
     else:
         session.attributes['userID'] = db.getUser(name)
         #ueberpruefen, ob heute bereits geredet wurde
         if db.getUserFeeling(session.attributes['userID']) == None:
             session.attributes['session_key'] = 'how'
-            return question("Hallo {}, schoen dich wieder zu sehen, wie geht es dir heute?".format(name))
+            return question("Hallo {}, schoen dich wieder zu sehen, wie geht es dir heute?".format(str(name)))
         #Es wurde geredet -> Wie ist die Stimmung
         elif db.getUserFeeling(session.attributes['userID']) == 1:
             session.attributes['session_key'] = 'how'
-            return question("Hallo {}, dir geht es heute gut, oder?".format(name))
+            return question("Hallo {}, dir geht es heute gut, oder?".format(str(name)))
         elif db.getUserFeeling(session.attributes['userID']) == 0:
             session.attributes['session_key'] = 'how'
-            return question("Hallo {}, wie geht es dir mittlerweile?".format(name))
+            return question("Hallo {}, wie geht es dir mittlerweile?".format(str(name)))
         else:
             session.attributes['session_key'] = 'badhow'
-            return question("Hallo {}, geht es dir immer noch schlecht?".format(name))
+            return question("Hallo {}, geht es dir immer noch schlecht?".format(str(name)))
 
 #Intent fuer alle positiven Antworten des Nutzers
 @ask.intent('YesIntent')
