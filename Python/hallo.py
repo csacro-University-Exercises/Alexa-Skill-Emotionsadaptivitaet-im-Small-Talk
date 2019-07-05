@@ -39,7 +39,7 @@ def createuser(name):
     if userId == None:
         session.attributes['userID'] = db.createUser(name)
         session.attributes['session_key'] = 'how'
-        return question("Hallo {}, wie geht es dir heute?".format(name))
+        return question("Hallo {}, freut mich dich kennen zu lernen. Zu Beginn eine kurze Einfuehrung. Du kannst mir nun Aktivitaeten nennen, die du entweder schon getan hast oder die fuer heute noch geplant sind. Sage dafuer zum Beispiel Ich werde zeichnen oder ich habe gezeichnet. Ausserdem kannst du dir mit dem Befehl Vorschlag eine Aktivitaet vorschlagen lassen oder mit Was nach deinen geplanten Aktivitaeten fragen. Beendet wird die Anwendung mit Ende. Aber nun, wie geht es dir denn heute?".format(name))
     else:
         session.attributes['userID'] = userId
         userFeeling = db.getUserFeeling(userId)
@@ -628,7 +628,13 @@ def tell():
         liste += " geplant"
         return question(liste)
 
+@ask.intent('AMAZON.FallbackIntent')
+def fall():
+    return question("Ich habe die Eingabe nicht verstanden. Kannst du sie bitte wiederholen?")
 
+@ask.intent('AMAZON.HelpIntent')
+def help():
+    return question("Du befindest dich im Smalltalk-Skill. Du kannst mir nun Aktivitaeten nennen, die du entweder schon getan hast oder die fuer heute noch geplant sind. Sage dafuer zum Beispiel Ich werde zeichnen oder ich habe gezeichnet. Ausserdem kannst du dir mit dem Befehl Vorschlag eine Aktivitaet vorschlagen lassen oder mit Was nach deinen geplanten Aktivitaeten fragen. Beendet wird die Anwendung mit Ende.")
 
 if __name__ == '__main__':
     app.run(debug=True)

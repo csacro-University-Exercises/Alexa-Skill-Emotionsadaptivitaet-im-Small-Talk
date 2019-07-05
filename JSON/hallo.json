@@ -13,7 +13,10 @@
                 },
                 {
                     "name": "AMAZON.HelpIntent",
-                    "samples": []
+                    "samples": [
+                        "Help",
+                        "Hilfe"
+                    ]
                 },
                 {
                     "name": "AMAZON.StopIntent",
@@ -21,8 +24,7 @@
                         "Schluss",
                         "aufhören",
                         "Stopp",
-                        "Ende",
-						"Tschüss"
+                        "Ende"
                     ]
                 },
                 {
@@ -75,7 +77,6 @@
                     ],
                     "samples": [
                         "richtig",
-						"stimmt",
                         "Doch",
                         "Ich fühle mich {gut}",
                         "Mir geht es {gut}",
