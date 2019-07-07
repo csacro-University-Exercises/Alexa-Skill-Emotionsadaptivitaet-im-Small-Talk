@@ -36,7 +36,7 @@ def cancel():
 def createuser(name):
     print("UserIntent")
     if(session.attributes['userKnown']):
-        return question("Ich bin durcheinander gekommen, entschuldige. Was machst du heute sonst so?")
+        return question("Ich habe die Eingabe nicht verstanden. Kannst du sie bitte anders formulieren?")
     session.attributes['session_key'] = 'how'
     userId = db.getUser(name)
     if userId == None:
@@ -609,16 +609,15 @@ def suggestion():
         counter += 1
         session.attributes['count'] = counter
         if db.getActivity(session.attributes['userID'], counter) != None:
-            session.attributes['session_key'] = 'furthersuggestion'
-            return question("Wie waere es mit {} . Soll ich dir eine weitere Aktivitaet vorschlagen, dann sag bitte Vorschlag oder Ende zum Beenden".format(act))
+            return question("Du koenntest {} . Für einen weiteren Vorschlag, sag bitte Vorschlag. Zum Beenden, sag Ende.".format(act))
         else:
             db.disconnectDatenbank()
             print("db disconnected")
-            return statement("Du koenntest {}".format(act))
+            return statement("Du koenntest {}. Da ich keine weiteren Vorschlaege habe, werde ich mich beenden".format(act))
     else:
         db.disconnectDatenbank()
         print("db disconnected")
-        return statement("Leider kann ich dir noch keine Aktivitaet vorschlagen")
+        return statement("Leider kann ich dir noch keine Aktivitaet vorschlagen. Bis zum naechsten Mal.")
 
 #geplante Aktivitaeten sagen
 @ask.intent('TellFutureIntent')
@@ -626,7 +625,7 @@ def tell():
     print("TellFutureIntent")
     activities = db.getFutureActivities(session.attributes['userID'])
     if activities == None:
-        return question("Du hast heute noch nichts geplant")
+        return question("Ich kenne deine Plaene fuer heute nicht. Erzaehle mir bitte, was du vor hast.")
     else:
         liste = "Du hast heute "
         for i in range(0, len(activities)):
@@ -638,7 +637,7 @@ def tell():
             else:
                 liste += activities[i][0]
                 liste += ", "
-        liste += " geplant"
+        liste += " geplant. Was hast du heute sonst noch vor?"
         return question(liste)
 
 @ask.intent('AMAZON.FallbackIntent')

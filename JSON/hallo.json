@@ -22,7 +22,7 @@
                     "name": "AMAZON.StopIntent",
                     "samples": [
                         "Schluss",
-                        "aufhören",
+                        "aufhoeren",
                         "Stopp",
                         "Ende"
                     ]
@@ -53,7 +53,7 @@
                         "Gibt es noch etwas dass ich gerne mache",
                         "Hast du noch Ideen",
                         "Kannst du mir etwas vorschlagen",
-                        "Vorschläge",
+                        "Vorschlaege",
                         "Vorschlag"
                     ]
                 },
@@ -78,7 +78,7 @@
                     "samples": [
                         "richtig",
                         "Doch",
-                        "Ich fühle mich {gut}",
+                        "Ich fuehle mich {gut}",
                         "Mir geht es {gut}",
                         "sicher",
                         "auf jeden fall",
@@ -97,7 +97,7 @@
                     ],
                     "samples": [
                         "Mir geht es {neutral}",
-                        "Ich fühle mich {neutral}",
+                        "Ich fuehle mich {neutral}",
                         "{neutral}"
                     ]
                 },
@@ -113,7 +113,7 @@
                         "falsch",
                         "nein",
                         "Ich habe Schmerzen",
-                        "Ich fühle mich {schlecht}",
+                        "Ich fuehle mich {schlecht}",
                         "Mir geht es {schlecht}",
                         "{schlecht}"
                     ]
@@ -135,7 +135,8 @@
                         "Ich habe mich {action}",
                         "Ich bin {action}",
                         "Heute bin ich {action}",
-						"Ich musste {action}"
+						"Ich musste {action}",
+						"Ich musste heute {action}"
                     ]
                 },
                 {
@@ -437,10 +438,10 @@
                                 "value": "ins Theater gehen",
                                 "synonyms": [
                                     "ins Theater gegangen",
-                                    "ein Theaterstück gesehen",
-                                    "ein Theaterstück sehen",
-                                    "ein Theaterstück anschauen",
-                                    "ein Theaterstück angeschaut"
+                                    "ein Theaterstueck gesehen",
+                                    "ein Theaterstueck sehen",
+                                    "ein Theaterstueck anschauen",
+                                    "ein Theaterstueck angeschaut"
                                 ]
                             }
                         },
@@ -480,9 +481,9 @@
                         },
                         {
                             "name": {
-                                "value": "Behördengänge machen",
+                                "value": "Behoerdengaenge machen",
                                 "synonyms": [
-                                    "habe Behördengänge gemacht",
+                                    "habe Behoerdengaenge gemacht",
                                     "ins Rathaus gehen",
                                     "ins Rathaus gegangen",
                                     "etwas beantragen",
@@ -546,9 +547,9 @@
                         },
                         {
                             "name": {
-                                "value": "Musik hören",
+                                "value": "Musik hoeren",
                                 "synonyms": [
-                                    "Musik gehört"
+                                    "Musik gehoert"
                                 ]
                             }
                         },
@@ -600,8 +601,8 @@
                                     "geputzt",
                                     "sauber machen",
                                     "sauber gemacht",
-                                    "aufräumen",
-                                    "aufgeräumt",
+                                    "aufraeumen",
+                                    "aufgeraeumt",
                                     "Ordnung schaffen",
                                     "Ordnung geschaffen"
                                 ]
