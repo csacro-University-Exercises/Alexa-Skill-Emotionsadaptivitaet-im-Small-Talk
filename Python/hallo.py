@@ -609,7 +609,7 @@ def suggestion():
         counter += 1
         session.attributes['count'] = counter
         if db.getActivity(session.attributes['userID'], counter) != None:
-            return question("Du koenntest {} . Für einen weiteren Vorschlag, sag bitte Vorschlag. Zum Beenden, sag Ende.".format(act))
+            return question("Du koenntest {} . Fuer einen weiteren Vorschlag, sag bitte Vorschlag. Zum Beenden, sag Ende.".format(act))
         else:
             db.disconnectDatenbank()
             print("db disconnected")
