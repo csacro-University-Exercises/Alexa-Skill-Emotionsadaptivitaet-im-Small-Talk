@@ -134,7 +134,8 @@
                         "Heute war ich {action}",
                         "Ich habe mich {action}",
                         "Ich bin {action}",
-                        "Heute bin ich {action}"
+                        "Heute bin ich {action}",
+						"Ich musste {action}"
                     ]
                 },
                 {
