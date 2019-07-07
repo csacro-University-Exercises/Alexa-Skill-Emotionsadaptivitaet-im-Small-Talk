@@ -158,14 +158,14 @@ def actionsGood():
         'futbadno-1': "Okay das freut mich. Was machst du heute sonst so?",
         'pastgoodnono': "Okay, was machst du heute sonst so?",
         'pastgoodno1': "Super. Was hast du sonst so vor oder hast du gemacht?",
-        'pastgoodno0': "Das ist toll. Erzähl mir von deinen anderen Aktivitaeten.",
+        'pastgoodno0': "Das ist toll. Erzaehl mir von deinen anderen Aktivitaeten.",
         'pastgoodno-1': "Schoen, dass du doch Spass hattest. Was ist heute sonst so gewesen?",
         'pastgood1': "Super, dass es gut war. Was machst du heute sonst so schoenes?",
         'pastgood0': "Okay, wenigstens war es nicht schlecht. Was machst du heute sonst so?",
         'pastgood-1': "Das ist nicht gut. Was fuer Aktivitaeten machst du heute sonst so?",
         'pastbadnono': "Okay, was machst du heute sonst so?",
         'pastbadno1': "Gut dass es dir trotzdem Spass macht. Was machst du heute sonst so?",
-        'pastbadno0': "Ah das ist schoen. Erzähl mir was du sonst so machst oder gemacht hast.",
+        'pastbadno0': "Ah das ist schoen. Erzaehl mir was du sonst so machst oder gemacht hast.",
         'pastbadno-1': "Okay, dann weiss ich Bescheid. Gibt es sonst etwas das dir den Tag verdorben hat?",
         'pastbad1': "Schade, dass dich deine Laune beeinflusst hat. Gibt es sonst noch etwas?",
         'pastbad0': "Wenigstens war es nicht schlecht. Was machst du heute sonst so?",
@@ -416,9 +416,9 @@ def actionsBad():
         'pastgoodnono': "Okay, was machst du heute sonst noch?",
         'pastgoodno1': "Oh das ist sehr schade. Moechtest du mir sonst von einer Aktivitaet erzaehlen?",
         'pastgoodno0': "Schade, dass du keinen Spass hattest. Was machst du heute sonst noch?",
-        'pastgoodno-1': "Schade, das dachte ich mir. Erzähl mir doch was du sonst so machst?",
+        'pastgoodno-1': "Schade, das dachte ich mir. Erzaehl mir doch was du sonst so machst?",
         'pastgood1': "Das ist sehr schade. Was hast du sonst gemacht oder wirst du machen?",
-        'pastgood0': "Schade, dass es schlechter war. Erzähl mir doch was du sonst so machst.",
+        'pastgood0': "Schade, dass es schlechter war. Erzaehl mir doch was du sonst so machst.",
         'pastgood-1': "Ah freut mich, dass es besser war. Was machst du heute sonst noch?",
         'pastbadnono': "Okay, was machst du heute sonst noch?",
         'pastbadno1': "Schade, was hast du denn sonst geplant?",
@@ -426,7 +426,7 @@ def actionsBad():
         'pastbadno-1': "Okay alles klar. Gibt es sonst noch etwas?",
         'pastbad1': "Schoen, dass es trotzdem Spass gemacht hat. Was gibt es sonst so?",
         'pastbad0': "Oh das tut mir leid. Was hast du sonst so gemacht oder hast du vor?",
-        'pastbad-1': "Freut mich, dass es doch besser war. Erzähl mir doch was du sonst so machst"
+        'pastbad-1': "Freut mich, dass es doch besser war. Erzaehl mir doch was du sonst so machst"
     }
 
     session.attributes['session_key'] = sessionKeyKeySwitcher.get(sessionkey, 'how')
