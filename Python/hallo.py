@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from flask import Flask
+from flask import Flask, request
 from flask_ask import Ask, statement, question, session
 import random
 import mysql.connector
@@ -180,6 +180,7 @@ def actionsGood():
     futurestatus = sessionKeyFuturestatusSwitcher.get(sessionkey, None)
     donestatus = sessionKeyDonestatusSwitcher.get(sessionkey, None)
     future2done = sessionKeyFuture2DoneSwitcher.get(sessionkey, None)
+    
     if(feeling != None):
         db.setUserFeeling(session.attributes['userID'], feeling)
     if(futurestatus != None):
@@ -450,10 +451,12 @@ def actionsBad():
     else:
         return question(answ)
 
-@ask.intent('PastActivityIntent', convert={'action': str})
-def action(action):
+@ask.intent('PastActivityIntent')
+def action():
     print("PastActivityIntent")
-    session.attributes['action'] = action
+    content = request.get_json()
+    session.attributes['action'] = (content['request']['intent']['slots']['action']['resolutions']['resolutionsPerAuthority'][0]['values'][0]['value']['name'])
+    action = session.attributes['action']
 
     if session.attributes['session_key'] == 'badmood':
         futurestatus = db.getFutureStatus(session.attributes['userID'], action)
@@ -520,11 +523,12 @@ def action(action):
             answ = donestatusAnswSwitcher.get(donestatus, "Hat dir das Spass gemacht?")
         return question(answ)
 
-@ask.intent('FutureActivityIntent', convert={'action': str})
-def action(action):
+@ask.intent('FutureActivityIntent')
+def action():
     print("FutureActivityIntent")
-    session.attributes['action'] = action
-
+    content = request.get_json()
+    session.attributes['action'] = (content['request']['intent']['slots']['action']['resolutions']['resolutionsPerAuthority'][0]['values'][0]['value']['name'])
+    action = session.attributes['action']
     if session.attributes['session_key'] == 'badmood':
         futurestatus = db.getFutureStatus(session.attributes['userID'], action)
         if (futurestatus != None):
